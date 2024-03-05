@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/Views/auth.dart';
+import 'package:swiftfunds/Views/login.dart';
+import 'package:swiftfunds/Components/colors.dart';
 
 void main() {
+
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -15,10 +18,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SwiftFunds',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xA6DE9A)),
+        colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
         useMaterial3: true,
       ),
-      home: const AuthScreen()
+      home: const LoginScreen()
     );
   }
 }
