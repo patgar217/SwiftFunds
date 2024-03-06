@@ -18,14 +18,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginState extends State<LoginScreen> {
-  final usrName = TextEditingController();
-  final password = TextEditingController();
+  final usrNameController = TextEditingController();
+  final passwordController = TextEditingController();
   bool isLoginTrue = false;
 
   final db = DatabaseHelper();
     login()async{
-      Users? usrDetails = await db.getUser(usrName.text);
-      var res = await db.authenticate(Users(usrName: usrName.text, password: password.text));
+      Users? usrDetails = await db.getUser(usrNameController.text);
+      var res = await db.authenticate(Users(usrName: usrNameController.text, password: passwordController.text));
       if(res == true){
         //If result is correct then go to profile or home
         if(!mounted)return;
@@ -62,8 +62,8 @@ class _LoginState extends State<LoginScreen> {
                   padding: EdgeInsets.only(bottom: 40),
                   child: Text("Please sign in to continue", style: TextStyle(fontSize: 18, color: primaryDark)),
                 ),
-                InputField(hint: "Username", icon: Icons.account_circle, controller: usrName),
-                InputField(hint: "Password", icon: Icons.lock, controller: password, passwordInvisible: true,),
+                InputField(hint: "Username", icon: Icons.account_circle, controller: usrNameController),
+                InputField(hint: "Password", icon: Icons.lock, controller: passwordController, passwordInvisible: true,),
 
                 isLoginTrue ? Row(
                   children: [

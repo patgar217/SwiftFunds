@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Views/add_biller.dart';
-
 
 class Bill extends StatefulWidget {
   final String billName;
@@ -24,7 +24,21 @@ class _BillState extends State<Bill> {
     bool isBillPaid = widget.isChecked;
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: (){Navigator.of(context).push( MaterialPageRoute(builder: (context) => AddBillerScreen(billerName: widget.billName,), ),);},
+      onTap: (){
+        final now = DateTime.now();
+        final dueDate = now.add(Duration(days: int.parse(widget.dueDays)));
+
+        final formatter = DateFormat('MM/dd/yyyy');
+        final formattedDate = formatter.format(dueDate);
+        Navigator.of(context).push( MaterialPageRoute(builder: (context) => AddBillerScreen(
+          billerName: widget.billName,
+          billName: widget.billName,
+          acctName: widget.billName,
+          acctNumber: widget.billId,
+          amount: widget.amount.toString(),
+          dueDate: formattedDate,
+        ), ),);
+      },
       behavior: HitTestBehavior.opaque,
       child: Container(
         width: size.width * .9,

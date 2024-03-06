@@ -6,18 +6,23 @@ import 'package:swiftfunds/Views/home.dart';
 
 class AddBillerScreen extends StatefulWidget {
   final String billerName;
-  const AddBillerScreen({super.key, required this.billerName});
+  final String? amount;
+  final String? acctNumber;
+  final String? dueDate;
+  final String? acctName;
+  final String? billName;
+  const AddBillerScreen({super.key, required this.billerName, this.amount, this.acctNumber, this.dueDate, this.acctName, this.billName});
 
   @override
   State<AddBillerScreen> createState() => _AddBillerScreenState();
 }
 
 class _AddBillerScreenState extends State<AddBillerScreen> {
-  final amount = TextEditingController();
-  final dueDate = TextEditingController();
-  final acctNumber = TextEditingController();
-  final acctName = TextEditingController();
-  final billName = TextEditingController();
+  late final amountController = TextEditingController(text: widget.amount ?? "");
+  late final dueDateController = TextEditingController(text: widget.dueDate ?? "");
+  late final acctNumberController = TextEditingController(text: widget.acctNumber ?? "");
+  late final acctNameController = TextEditingController(text: widget.acctName ?? "");
+  late final billNameController = TextEditingController(text: widget.billName ?? "");
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +87,11 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                               ),
                               const SizedBox(height: 5,),
                               const Text("Amount", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "P0.00", icon: Icons.monetization_on, controller: amount),
+                              InputField(hint: "P0.00", icon: Icons.monetization_on, controller: amountController),
 
                               const Spacer(),
                               const Text("Due Date", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "MM/DD/YY", icon: Icons.calendar_month, controller: dueDate),
+                              InputField(hint: "MM/DD/YYYY", icon: Icons.calendar_month, controller: dueDateController),
 
                               const SizedBox(height: 20,),
                               const Text("Biller Details", style: TextStyle(fontSize: 12, color: secondaryDark)),
@@ -97,15 +102,15 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                               ),
                               const SizedBox(height: 5,),
                               const Text("Bill Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "Name of bill", icon: Icons.badge, controller: billName),
+                              InputField(hint: "Name of bill", icon: Icons.badge, controller: billNameController),
 
                               const Spacer(),
                               const Text("Account Number", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "12 digit account number", icon: Icons.account_balance_wallet, controller: acctNumber),
+                              InputField(hint: "12 digit account number", icon: Icons.account_balance_wallet, controller: acctNumberController),
 
                               const Spacer(),
                               const Text("Account Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctName),
+                              InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctNameController),
                             ]
                           )
                         )

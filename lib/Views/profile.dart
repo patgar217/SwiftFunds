@@ -30,28 +30,28 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 10),
               
-                  Text(profile!.fullName??"",style: const TextStyle(fontSize: 28,color: primaryDark),),
+                  Text(profile?.fullName??"",style: const TextStyle(fontSize: 28,color: primaryDark),),
 
-                  Text(profile!.email??"",style: const TextStyle(fontSize: 17,color: primaryDark),),
+                  Text(profile?.email??"",style: const TextStyle(fontSize: 17,color: primaryDark),),
 
                   const SizedBox(height: 30),
 
                   ListTile(
                     leading: const Icon(Icons.person,size: 40),
                     subtitle: const Text("Full name", style: TextStyle(color: Colors.grey),),
-                    title: Text(profile!.fullName??""),
+                    title: Text(profile?.fullName??""),
                   ),
 
                   ListTile(
                     leading: const Icon(Icons.email,size: 40),
                     subtitle: const Text("Email", style: TextStyle(color: Colors.grey),),
-                    title: Text(profile!.email??""),
+                    title: Text(profile?.email??""),
                   ),
 
                   ListTile(
                     leading: const Icon(Icons.account_circle,size: 40),
                     subtitle: const Text("Username", style: TextStyle(color: Colors.grey),),
-                    title: Text(profile!.usrName),
+                    title: Text(profile?.usrName??""),
                   ),
 
                   const SizedBox(height: 170),

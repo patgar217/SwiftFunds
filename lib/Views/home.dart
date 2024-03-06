@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:swiftfunds/DragonPay/payment_method.dart';
 import 'package:swiftfunds/Models/users.dart';
 import 'package:swiftfunds/Components/bill.dart';
 import 'package:swiftfunds/Components/header.dart';
 import 'package:swiftfunds/Components/button.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/my_bills.dart';
-import 'package:swiftfunds/Views/payment_result.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Positioned(
                         top: size.height * .88,
                         child: Button(label: "PAY BILLS", press: (){ 
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentMethodScreen()));
                         }, backgroundColor: secondaryDark, textSize: 18, isRounded: true,)
                       )
                     ],

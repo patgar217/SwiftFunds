@@ -24,7 +24,7 @@ class InputField extends StatelessWidget {
       decoration: BoxDecoration(
         color: primaryLightest,
         borderRadius: BorderRadius.circular(8),
-         border: Border.all( // Add a border around all sides
+        border: Border.all( // Add a border around all sides
           color: primaryDark, // Set the desired border color
           width: 1, // Optional: Set the border width (default is 1.0)
         ),
