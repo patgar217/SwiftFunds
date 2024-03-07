@@ -68,6 +68,28 @@ flutter:
     - assets/profile.png
     - assets/logo-negative.png
     - assets/dragon-pay-logo.png
+    - assets/payments/bdo.png
+    - assets/payments/boc.png
+    - assets/payments/boguslogo.jpg
+    - assets/payments/bpi.png
+    - assets/payments/cebuana.png
+    - assets/payments/chinabank.png
+    - assets/payments/coinsph.png
+    - assets/payments/gcash.png
+    - assets/payments/instapay.png
+    - assets/payments/landbank.png
+    - assets/payments/maybank.png
+    - assets/payments/metrobank.png
+    - assets/payments/paymaya.png
+    - assets/payments/pbcom.png
+    - assets/payments/pesonet.png
+    - assets/payments/psbank.png
+    - assets/payments/rcbc.png
+    - assets/payments/robinsonsbank.png
+    - assets/payments/securitybank.png
+    - assets/payments/ucpb.png
+    - assets/payments/unionbank.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -85,6 +107,7 @@ flutter:
       fonts:
         - asset: assets/verdana.ttf
         - asset: assets/verdana-bold.ttf
+        - asset: assets/OpenSans-Regular.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

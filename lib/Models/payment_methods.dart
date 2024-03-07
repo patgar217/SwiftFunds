@@ -1,0 +1,85 @@
+enum PaymentType {
+  bank,
+  card,
+  eWallet,
+  others,
+  none,
+}
+
+class PaymentMethod {
+  final String key;
+  final String value;
+  final PaymentType type;
+  final String name;
+  final String imageFile;
+
+  const PaymentMethod(this.key, this.value, this.type, this.name, this.imageFile);
+}
+
+const List<PaymentMethod> paymentMethods = [
+    PaymentMethod("", "--- SELECT A PAYMENT OPTION ---", PaymentType.none, "", ""),
+    PaymentMethod("DPAY", "Dragonpay Prepaid Credits", PaymentType.eWallet, "DragonPay Prepaid Credits", "assets/dragon-pay-logo.png"),
+    PaymentMethod("DPWL", "Dragonpay Wallet", PaymentType.eWallet, "DragonPay Wallet", "assets/dragon-pay-logo.png"),
+    PaymentMethod("CC", "Credit/Debit Cards", PaymentType.card, "", ""),
+    PaymentMethod("", "--- ONLINE BANKING / E-WALLET ---", PaymentType.none, "", ""),
+    PaymentMethod("BOC", "Bank of Commerce Online", PaymentType.bank, "Bank of Commerce", "assets/payments/boc.png"),
+    PaymentMethod("BDO", "BDO Internet Banking", PaymentType.bank, "BDO", "assets/payments/bdo.png"),
+    PaymentMethod("BPIA", "BPI Online/Mobile", PaymentType.bank, "BPI", "assets/payments/bpi.png"),
+    PaymentMethod("CEBB", "Cebuana Lhuillier Rural Bank", PaymentType.bank, "Cebuana Lhuillier", "assets/payments/cebuana.png"),
+    PaymentMethod("CBCB", "China Bank Online Bills Payment", PaymentType.bank, "China Bank", "assets/payments/chinabank.png"),
+    PaymentMethod("CBDD", "China Bank Online Direct Debit (NEW)", PaymentType.bank, "China Bank", "assets/payments/chinabank.png"),
+    PaymentMethod("INPY", "Instapay using any bank/ewallet (NEW)", PaymentType.bank, "Instapay", "assets/payments/instapay.png"),
+    PaymentMethod("LBPA", "Landbank ATM Online", PaymentType.bank, "Landbank", "assets/payments/landbank.png"),
+    PaymentMethod("MAYB", "Maybank Online Banking", PaymentType.bank, "Maybank", "assets/payments/maybank.png"),
+    PaymentMethod("MBTC", "Metrobankdirect", PaymentType.bank, "Metrobank", "assets/payments/metrobank.png"),
+    PaymentMethod("PBCM", "PBCom Online Banking", PaymentType.bank, "PBCom", "assets/payments/pbcom.png"),
+    PaymentMethod("PSNT", "PESONet from any bank/ewallet (NEW)", PaymentType.bank, "PESONet", "assets/payments/pesonet.png"),
+    PaymentMethod("PSB", "PSBank Online", PaymentType.bank, "PSBank", "assets/payments/psbank.png"),
+    PaymentMethod("RCBC", "RCBC Online Banking", PaymentType.bank, "RCBC", "assets/payments/rcbc.png"),
+    PaymentMethod("RCDD", "RCBC Online Direct Debit (NEW)", PaymentType.bank, "RCBC", "assets/payments/rcbc.png"),
+    PaymentMethod("RSB", "RobinsonsBank Online Bills Payment", PaymentType.bank, "RobinsonsBank", "assets/payments/robinsonsbank.png"),
+    PaymentMethod("SBC", "Security Bank Online Bills Payment", PaymentType.bank, "Security Bank", "assets/payments/securitybank.png"),
+    PaymentMethod("BOG", "Test Bank Online", PaymentType.bank, "Test Bank", "assets/payments/boguslogo.jpg"),
+    PaymentMethod("UCPB", "UCPB Connect/Mobile", PaymentType.bank, "UCPB", "assets/payments/ucpb.png"),
+    PaymentMethod("UBP5", "Unionbank Internet Banking", PaymentType.bank, "Unionbank", "assets/payments/unionbank.png"),
+    PaymentMethod("UBDD", "Unionbank Online Direct Debit (NEW)", PaymentType.bank, "Unionbank",  "assets/payments/unionbank.png"),
+    PaymentMethod("BITC", "Coins.ph", PaymentType.eWallet, "Coins.ph", "assets/payments/coinsph.png"),
+    PaymentMethod("BTCN", "Coins.ph (New)", PaymentType.eWallet, "Coins.ph", "assets/payments/coinsph.png"),
+    PaymentMethod("GCSB", "GCash Bills Pay", PaymentType.eWallet, "GCash", "assets/payments/gcash.png"),
+    PaymentMethod("PYMB", "PayMaya Bills Pay", PaymentType.eWallet, "PayMaya", "assets/payments/paymaya.png"),
+    PaymentMethod("RCDK", "RCBC Diskartech", PaymentType.eWallet, "RCBC", "assets/payments/rcbc.png"),
+    PaymentMethod("", "--- OVER-THE-COUNTER/ATM BANKING ---", PaymentType.none, "", ""),
+    PaymentMethod("AUB", "AUB Online/Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("BNRX", "BDO Network Bank (formerly ONB) Cash Dep", PaymentType.others, "", ""),
+    PaymentMethod("BPXB", "BPI Bills Payment", PaymentType.others, "", ""),
+    PaymentMethod("CBXB", "China Bank Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("EWXB", "EastWest Online/Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("I2I", "I2I Rural Banks", PaymentType.others, "", ""),
+    PaymentMethod("LBXB", "Landbank Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("MBXB", "Metrobank Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("NTB", "Netbank Notebook", PaymentType.others, "", ""),
+    PaymentMethod("PNXB", "PNB Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("PNBB", "PNB e-Banking Bills Payment", PaymentType.others, "", ""),
+    PaymentMethod("RCXB", "RCBC ATM/Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("RSBB", "RobinsonsBank Over-the-Counter", PaymentType.others, "", ""),
+    PaymentMethod("SBCB", "Security Bank Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("BOGX", "Test Bank Over-the-Counter", PaymentType.others, "", ""),
+    PaymentMethod("UCXB", "UCPB ATM/Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("UBXB", "Unionbank Cash Payment", PaymentType.others, "", ""),
+    PaymentMethod("","--- OVER-THE-COUNTER OTHERS ---", PaymentType.none, "", ""),
+    PaymentMethod("711", "7-Eleven", PaymentType.others, "", ""),
+    PaymentMethod("CEBL", "Cebuana Lhuillier", PaymentType.others, "", ""),
+    PaymentMethod("CVM", "CVM Pawnshop", PaymentType.others, "", ""),
+    PaymentMethod("ECPY", "ECPay (GCash/Payment Centers)", PaymentType.others, "", ""),
+    PaymentMethod("MLH", "M. Lhuillier", PaymentType.others, "", ""),
+    PaymentMethod("PLWN", "Palawan Pawnshop", PaymentType.others, "", ""),
+    PaymentMethod("PRHB", "Perahub", PaymentType.others, "", ""),
+    PaymentMethod("POSB", "Posible Partners (Family Mart, Phoenix)", PaymentType.others, "", ""),
+    PaymentMethod("RDP", "RD Pawnshop", PaymentType.others, "", ""),
+    PaymentMethod("RDS", "Robinsons Dept Store", PaymentType.others, "", ""),
+    PaymentMethod("RLNT", "RuralNet Banks and Coops", PaymentType.others, "", ""),
+    PaymentMethod("SMR", "SM Dept/Supermarket/Savemore Counter", PaymentType.others, "", ""),
+    PaymentMethod("TBTG", "Tambunting Pawnshop", PaymentType.others, "", ""),
+    PaymentMethod("USSC", "USSC", PaymentType.others, "", ""),
+    PaymentMethod("VLRC", "Villarica Pawnshop", PaymentType.others, "", "")
+  ];

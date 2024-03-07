@@ -32,7 +32,7 @@ class InputField extends StatelessWidget {
 
       child: Center(
         child: TextFormField(
-           obscureText: passwordInvisible,
+          obscureText: passwordInvisible,
           controller: controller,
           decoration: InputDecoration(
             border: InputBorder.none,
