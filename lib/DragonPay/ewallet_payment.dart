@@ -113,23 +113,47 @@ class _EWalletPaymentScreenState extends State<EWalletPaymentScreen> {
               ),
               const SizedBox(height: 10,),
               Center(
-                child: Container(
-                  width: 130,
-                  height: 35,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEFEFEF), 
-                    borderRadius: BorderRadius.circular(3),
-                    border: Border.all( // Add a border around all sides
-                      color: const Color.fromRGBO(118, 118, 118, 1.0), // Set the desired border color
-                      width: 2, // Optional: Set the border width (default is 1.0)
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 130,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFEFEF), 
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border.all( // Add a border around all sides
+                          color: const Color.fromRGBO(118, 118, 118, 1.0), // Set the desired border color
+                          width: 1, // Optional: Set the border width (default is 1.0)
+                        ),
+                      ),
+                      child: TextButton(
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: true,)));
+                        },
+                        child: const Text("Pay P2500.00", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
+                      ),
                     ),
-                  ),
-                  child: TextButton(
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen()));
-                    },
-                    child: const Text("Pay P2500.00", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
-                  ),
+                    const SizedBox(width: 10,),
+                    Container(
+                      width: 130,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFEFEF), 
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border.all( // Add a border around all sides
+                          color: const Color.fromRGBO(118, 118, 118, 1.0), // Set the desired border color
+                          width: 1, // Optional: Set the border width (default is 1.0)
+                        ),
+                      ),
+                      child: TextButton(
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: false,)));
+                        },
+                        child: const Text("Cancel", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
+                      ),
+                    ),
+                  ],
                 ),
               )
             ],

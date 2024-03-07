@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:swiftfunds/DragonPay/bank_account.dart';
 import 'package:swiftfunds/Models/payment_methods.dart';
 import 'package:swiftfunds/Views/payment_result.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -138,12 +139,12 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                       borderRadius: BorderRadius.circular(3),
                       border: Border.all( // Add a border around all sides
                         color: const Color.fromRGBO(118, 118, 118, 1.0), // Set the desired border color
-                        width: 2, // Optional: Set the border width (default is 1.0)
+                        width: 1, // Optional: Set the border width (default is 1.0)
                       ),
                     ),
                     child: TextButton(
                       onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> BankAccountScreen(paymentMethod: widget.paymentMethod)));
                       },
                       child: const Text("Continue", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                     ),
@@ -157,12 +158,12 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                       borderRadius: BorderRadius.circular(3),
                       border: Border.all( // Add a border around all sides
                         color: const Color.fromRGBO(118, 118, 118, 1.0), // Set the desired border color
-                        width: 2, // Optional: Set the border width (default is 1.0)
+                        width: 1, // Optional: Set the border width (default is 1.0)
                       ),
                     ),
                     child: TextButton(
                       onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: false,)));
                       },
                       child: const Text("Cancel", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                     ),

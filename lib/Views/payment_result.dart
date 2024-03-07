@@ -5,7 +5,8 @@ import 'package:swiftfunds/Components/paid_bill.dart';
 import 'package:swiftfunds/Views/home.dart';
 
 class PaymentResultScreen extends StatefulWidget {
-  const PaymentResultScreen({super.key});
+  final bool isSuccess;
+  const PaymentResultScreen({super.key, required this.isSuccess});
 
   @override
   State<PaymentResultScreen> createState() => _PaymentResultScreenState();
@@ -21,7 +22,7 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
       body: Center(
         child: SafeArea(
           child: Container(
-            color: primaryColor,
+            color: (widget.isSuccess ? primaryColor : quarternaryColor),
             child: Column(
               children: [
                 Expanded(
@@ -30,9 +31,9 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                     clipBehavior: Clip.none,
                     children: [
                       Container(
-                        decoration: const BoxDecoration(
-                          color: secondaryDark,
-                          borderRadius: BorderRadius.only(
+                        decoration: BoxDecoration(
+                          color: (widget.isSuccess ? secondaryDark : quarternaryDark),
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(20.0),
                             bottomRight: Radius.circular(20.0),
                           ),
@@ -62,16 +63,23 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                                     shape: BoxShape.circle,
                                     color: backgroundColor,
                                     border: Border.all(
-                                      color: primaryLight, 
+                                      color: (widget.isSuccess ? primaryLight : quarternaryLight), 
                                       width: 10.0,
                                     ),
                                   ),
                                   alignment: Alignment.center,
                                   margin: const EdgeInsets.only(top: 50),
-                                  child: const Icon(Icons.check_circle, size: 180, color: primaryDark,)
+                                  child: Icon(
+                                    (widget.isSuccess ? Icons.check_circle : Icons.cancel), 
+                                    size: 180, 
+                                    color: (widget.isSuccess ? primaryDark : quarternaryDark),
+                                  )
                                 ),
                                 const SizedBox(height: 20,),
-                                const Text("Success!",style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+                                Text(
+                                  (widget.isSuccess ? "Success!" : "Failed!"),
+                                  style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                                ),
                                 const Text.rich(
                                   TextSpan(
                                     style: TextStyle(fontSize: 20),
@@ -87,22 +95,22 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 20,),
-                                const PaidBill(
+                                PaidBill(
                                   billerId: "123456",
                                   billerName: "CAPELCO",
                                   amount: 1500.00,
-                                  isPaid: true,
+                                  isPaid: widget.isSuccess,
                                 ),
                                 const Divider(
                                   color: Colors.black, 
                                   height: 20, 
                                   thickness: 1,
                                 ),
-                                const PaidBill(
+                                PaidBill(
                                   billerId: "123456",
                                   billerName: "WATER",
                                   amount: 1000.00,
-                                  isPaid: true,
+                                  isPaid: widget.isSuccess,
                                 ),
                                 const Spacer(),
                                 const Text("Total Amount", style: TextStyle(fontSize: 18),),
@@ -117,7 +125,7 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                         bottom: 30,
                         child: Button(label: "DONE", press: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
-                        }, backgroundColor: secondaryDark, textSize: 18, isRounded: true,),
+                        }, backgroundColor: (widget.isSuccess ? secondaryDark : quarternaryDark), textSize: 18, isRounded: true,),
                       ),
                     ]
                   )

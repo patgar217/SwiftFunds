@@ -136,7 +136,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   borderRadius: BorderRadius.circular(3),
                   border: Border.all( // Add a border around all sides
                     color: const Color.fromRGBO(118, 118, 118, 1.0), // Set the desired border color
-                    width: 2, // Optional: Set the border width (default is 1.0)
+                    width: 1, // Optional: Set the border width (default is 1.0)
                   ),
                 ),
                 child: TextButton(

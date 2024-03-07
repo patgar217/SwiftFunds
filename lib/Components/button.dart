@@ -8,14 +8,15 @@ class Button extends StatelessWidget {
     final double textSize;
     final bool? isRounded;
     final double? widthRatio;
-    const Button({ super.key, required this.label, required this.press, required this.backgroundColor, required this.textSize, this.isRounded, this.widthRatio });
+    final double? marginTop;
+    const Button({ super.key, required this.label, required this.press, required this.backgroundColor, required this.textSize, this.isRounded, this.widthRatio, this.marginTop });
 
   @override
   Widget build(BuildContext context){
     Size size = MediaQuery.of(context).size;
 
     return Container(
-      margin: const EdgeInsets.only(top: 15),
+      margin: EdgeInsets.only(top: marginTop?? 15),
       width: widthRatio != null ? size.width * widthRatio! :  size.width * .9,
       height: textSize * 2 + 10,
       decoration: BoxDecoration(color: backgroundColor, borderRadius: isRounded != null ? BorderRadius.circular(12) : null),

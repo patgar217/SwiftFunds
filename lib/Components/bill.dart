@@ -18,10 +18,10 @@ class Bill extends StatefulWidget {
 }
 
 class _BillState extends State<Bill> {
-
+  late bool isBillPaid = widget.isChecked;
+  
   @override
   Widget build(BuildContext context) {
-    bool isBillPaid = widget.isChecked;
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: (){

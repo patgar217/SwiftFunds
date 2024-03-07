@@ -46,7 +46,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         child: const Text("Add Bill",style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
                       ),
                       const Positioned(
-                        top: 75,
+                        top: 70,
                         child: CurrentBillersList()
                       ),
                       Positioned(

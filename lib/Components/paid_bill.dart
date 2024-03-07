@@ -16,7 +16,7 @@ class PaidBill extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(isPaid ? Icons.check_box : Icons.disabled_by_default, color: primaryDark, size:60),
+        Icon(isPaid ? Icons.check_box : Icons.disabled_by_default, color: isPaid ? primaryDark: quarternaryDark, size:60),
         const SizedBox(width: 5,),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

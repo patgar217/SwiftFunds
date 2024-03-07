@@ -17,7 +17,7 @@ const tertiaryDark = Color(0xFFC17B4A);
 const tertiaryLight = Color(0xFFFFE5D2);
 const tertiaryLightest = Color(0xFFFFF4ED);
 
-const quarternaryColor = Color(0xFFF8ACB4);
-const quarternaryDark = Color(0xFFBA4752);
-const quarternaryLight = Color(0xFFFBCFD3);
-const quarternaryLightest = Color(0xFFFEECED);
+const quarternaryColor = Color(0xFFD34747);
+const quarternaryDark = Color(0xFF8F0D0D);
+const quarternaryLight = Color(0xFFF57373);
+const quarternaryLightest = Color(0xFFFFA3A3);

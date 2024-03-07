@@ -3,14 +3,17 @@ import 'package:swiftfunds/Components/colors.dart';
 
 class InputField extends StatelessWidget {
   final String hint;
-  final IconData icon;
+  final IconData? icon;
   final bool passwordInvisible;
   final TextEditingController controller;
+  final double? height;
+  final double? width;
+  
   const InputField({super.key,
     required this.hint,
-    required this.icon,
+    this.icon,
     required this.controller,
-    this.passwordInvisible = false});
+    this.passwordInvisible = false, this.height, this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +22,8 @@ class InputField extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       margin: const EdgeInsets.symmetric(vertical: 5),
-      width: size.width *.9,
-      height: 55,
+      width: width ?? size.width *.9,
+      height: height ?? 55,
       decoration: BoxDecoration(
         color: primaryLightest,
         borderRadius: BorderRadius.circular(8),
@@ -37,8 +40,7 @@ class InputField extends StatelessWidget {
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: hint,
-            icon: Icon(icon),
-            iconColor: primaryDark,
+            icon: icon != null ? Icon(icon, color: primaryDark) : null,
             hintStyle: const TextStyle(color: primaryColor)
           ),
         ),

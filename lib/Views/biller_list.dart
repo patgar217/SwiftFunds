@@ -40,7 +40,7 @@ class BillerListScreen extends StatelessWidget {
                         child: const Text("Add Bill",style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
                       ),
                        Positioned(
-                        top: 75,
+                        top: 70,
                         child: Container(
                           width: size.width * .95,
                           height: size.height * .85,
