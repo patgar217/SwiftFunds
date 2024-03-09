@@ -6,21 +6,61 @@ import 'package:swiftfunds/Components/header.dart';
 import 'package:swiftfunds/Components/button.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/my_bills.dart';
-
+import 'package:swiftfunds/SQLite/database_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  final Users? profile;
-  const HomeScreen({super.key, this.profile});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Users? profile;
+  bool isProfileLoaded = false;
+
+  final db = DatabaseHelper();
+  
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    String loggedUserName = prefs.getString("loggedUserName") ?? "";
+
+    profile = await db.getUser(loggedUserName);
+    setState(() {
+      isProfileLoaded = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    if (isProfileLoaded) {
+      return HomeWidget(size: size, profile: profile);
+    } else {
+      return const Center(child: CircularProgressIndicator()); // Show loading indicator
+    }
+  }
+}
 
+class HomeWidget extends StatelessWidget {
+  const HomeWidget({
+    super.key,
+    required this.size,
+    required this.profile,
+  });
+
+  final Size size;
+  final Users? profile;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Center(
@@ -46,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Positioned(
                         top: 15,
-                        child: Header(size: size, widget: widget),
+                        child: Header(size: size, profile: profile),
                       ),
                       Positioned(
                         top: 70,

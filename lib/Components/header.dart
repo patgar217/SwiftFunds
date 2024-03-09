@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/Views/home.dart';
+import 'package:swiftfunds/Models/users.dart';
+import 'package:swiftfunds/Views/menu.dart';
 import 'package:swiftfunds/Views/profile.dart';
 import 'package:swiftfunds/Components/colors.dart';
 
@@ -7,12 +8,11 @@ import 'package:swiftfunds/Components/colors.dart';
 class Header extends StatelessWidget {
   const Header({
     super.key,
-    required this.size,
-    required this.widget,
+    required this.size, this.profile,
   });
 
   final Size size;
-  final HomeScreen widget;
+  final Users? profile;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class Header extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           GestureDetector(
-            onTap:(){ Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileScreen(profile: widget.profile))); },
+            onTap:(){ Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfileScreen())); },
             child: const CircleAvatar(
               backgroundColor: secondaryDark,
               radius: 17,
@@ -37,14 +37,16 @@ class Header extends StatelessWidget {
             width: 10,
           ),
           TextButton(
-            onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileScreen(profile: widget.profile))); }, 
-            child: Text("Hi, ${widget.profile?.fullName ?? 'Admin'}", style: const TextStyle(fontWeight: FontWeight.bold, color: secondaryDark),),
+            onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfileScreen())); }, 
+            child: Text("Hi, ${profile?.fullName ?? ''}", style: const TextStyle(fontWeight: FontWeight.bold, color: secondaryDark),),
           ),
           
           const Spacer(),
           IconButton(
             icon: const Icon(Icons.menu, color: secondaryDark,), 
-            onPressed: (){},
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const MenuScreen()));
+            },
           )
         ],
       ),

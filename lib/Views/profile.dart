@@ -1,12 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/Views/login.dart';
+import 'package:swiftfunds/SQLite/database_helper.dart';
 import 'package:swiftfunds/Models/users.dart';
-import 'package:swiftfunds/Components/button.dart';
 import 'package:swiftfunds/Components/colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final db = DatabaseHelper();
+  Users? profile;
+  bool isProfileLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfile(); 
+  }
+
+  loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    String loggedUserName = prefs.getString("loggedUserName") ?? "";
+
+    profile = await db.getUser(loggedUserName);
+    setState(() {
+      isProfileLoaded = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isProfileLoaded) {
+      return ProfileWidget(profile: profile);
+    } else {
+      return const Center(child: CircularProgressIndicator());
+    }
+  }
+}
+
+class ProfileWidget extends StatelessWidget {
+  const ProfileWidget({
+    super.key,
+    required this.profile,
+  });
+
   final Users? profile;
-  const ProfileScreen({super.key, this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -27,37 +69,32 @@ class ProfileScreen extends StatelessWidget {
                       radius: 70,
                     ),
                   ),
-
+    
                   const SizedBox(height: 10),
               
                   Text(profile?.fullName??"",style: const TextStyle(fontSize: 28,color: primaryDark),),
-
+    
                   Text(profile?.email??"",style: const TextStyle(fontSize: 17,color: primaryDark),),
-
+    
                   const SizedBox(height: 30),
-
+    
                   ListTile(
                     leading: const Icon(Icons.person,size: 40),
                     subtitle: const Text("Full name", style: TextStyle(color: Colors.grey),),
                     title: Text(profile?.fullName??""),
                   ),
-
+    
                   ListTile(
                     leading: const Icon(Icons.email,size: 40),
                     subtitle: const Text("Email", style: TextStyle(color: Colors.grey),),
                     title: Text(profile?.email??""),
                   ),
-
+    
                   ListTile(
                     leading: const Icon(Icons.account_circle,size: 40),
                     subtitle: const Text("Username", style: TextStyle(color: Colors.grey),),
                     title: Text(profile?.usrName??""),
                   ),
-
-                  const SizedBox(height: 170),
-                  Button(label: "LOG OUT", backgroundColor: primaryDark, textSize: 20, press: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-                  }),
               ],
             ),
           )

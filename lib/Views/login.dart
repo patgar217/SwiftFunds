@@ -6,7 +6,7 @@ import 'package:swiftfunds/Views/signup.dart';
 import 'package:swiftfunds/Components/button.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/textfield.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -23,15 +23,15 @@ class _LoginState extends State<LoginScreen> {
   bool isLoginTrue = false;
 
   final db = DatabaseHelper();
-    login()async{
-      Users? usrDetails = await db.getUser(usrNameController.text);
+  
+  login() async{
+      final prefs = await SharedPreferences.getInstance();
       var res = await db.authenticate(Users(usrName: usrNameController.text, password: passwordController.text));
       if(res == true){
-        //If result is correct then go to profile or home
         if(!mounted)return;
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeScreen(profile: usrDetails)));
+        prefs.setString("loggedUserName", usrNameController.text);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
       }else{
-        //Otherwise show the error message
         setState(() {
           isLoginTrue = true;
         });
