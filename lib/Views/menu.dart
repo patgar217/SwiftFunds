@@ -73,7 +73,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       leading: const Icon(Icons.settings,size: 30),
                       trailing: const Icon(Icons.arrow_right,size: 30),
                       title: const Text("Settings", style: TextStyle(fontSize: 18)),
-                      onTap: (){}
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const AboutScreen()));
+                      }
                     ),
                     const Divider(
                       height: 7,

@@ -33,9 +33,6 @@ class Header extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
-            width: 10,
-          ),
           TextButton(
             onPressed: (){ Navigator.push(context, MaterialPageRoute(builder: (context)=> const ProfileScreen())); }, 
             child: Text("Hi, ${profile?.fullName ?? ''}", style: const TextStyle(fontWeight: FontWeight.bold, color: secondaryDark),),

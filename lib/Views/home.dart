@@ -1,9 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/DragonPay/payment_method.dart';
 import 'package:swiftfunds/Models/users.dart';
 import 'package:swiftfunds/Components/bill.dart';
 import 'package:swiftfunds/Components/header.dart';
-import 'package:swiftfunds/Components/button.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/my_bills.dart';
 import 'package:swiftfunds/SQLite/database_helper.dart';
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeWidget extends StatelessWidget {
+class HomeWidget extends StatefulWidget {
   const HomeWidget({
     super.key,
     required this.size,
@@ -60,59 +60,137 @@ class HomeWidget extends StatelessWidget {
   final Users? profile;
 
   @override
+  State<HomeWidget> createState() => _HomeWidgetState();
+}
+
+class _HomeWidgetState extends State<HomeWidget> {
+
+  bool isRedeem = false;
+  bool isAll = false;
+
+  @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Center(
-        child: SafeArea(
-          child: Container(
-            color: primaryColor,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: backgroundColor,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20.0), // Adjust radius as desired
-                            bottomRight: Radius.circular(20.0),
-                          ),
+        child: Container(
+          color: primaryColor,
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: backgroundColor,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20.0), // Adjust radius as desired
+                          bottomRight: Radius.circular(20.0),
                         ),
-                        height: 150,
                       ),
-                      Positioned(
-                        top: 15,
-                        child: Header(size: size, profile: profile),
-                      ),
-                      Positioned(
-                        top: 70,
-                        child: MyBills(size: size),
-                      ),
-                      const Positioned(
-                        top: 240,
+                      height: 150,
+                    ),
+                    Positioned(
+                      top: 30,
+                      child: Header(size: widget.size, profile: widget.profile),
+                    ),
+                    Positioned(
+                      top: 80,
+                      child: MyBills(size: widget.size),
+                    ),
+                    const Positioned(
+                      top: 250,
+                      child: Column(
+                        children: [
+                          Bill(billName: "CAPELCO", billId: "123456789", isChecked: true, dueDays: "3", amount: 1500.00, icon: Icons.lightbulb,),
+                          Bill(billName: "WATER", billId: "123456789", isChecked: true, dueDays: "5", amount: 1000.00, icon: Icons.water_drop),
+                          Bill(billName: "INTERNET", billId: "123456789", isChecked: false, dueDays: "7", amount: 500.00, icon: Icons.router)
+                        ],
+                      )
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
+                        width: size.width,
+                        color: primaryLight,
                         child: Column(
                           children: [
-                            Bill(billName: "CAPELCO", billId: "123456789", isChecked: true, dueDays: "3", amount: 1500.00, icon: Icons.lightbulb,),
-                            Bill(billName: "WATER", billId: "123456789", isChecked: true, dueDays: "5", amount: 1000.00, icon: Icons.water_drop),
-                            Bill(billName: "INTERNET", billId: "123456789", isChecked: false, dueDays: "7", amount: 500.00, icon: Icons.router)
+                            const Divider(height:1, thickness: 1, color: primaryLightest,),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(width: 15,),
+                                const Text("Redeem 0 SwiftPoints", style: TextStyle(fontSize: 15),),
+                                const Spacer(),
+                                Transform.scale(
+                                  scale: 0.7,
+                                  child: CupertinoSwitch(
+                                    value: isRedeem,
+                                    onChanged: (value) { setState(() => isRedeem = value);},
+                                    activeColor: secondaryDark,
+                                    trackColor: const Color.fromARGB(255, 214, 214, 214),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const Divider(height:1, thickness: 1, color: primaryLightest,),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(width: 15,),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: Checkbox(
+                                        value: isAll, 
+                                        onChanged: (value){setState(() => isAll = !isAll);}
+                                      )
+                                    ),
+                                    const SizedBox(width: 10,),
+                                    const Text("All", style: TextStyle(fontSize: 15),)
+                                  ],
+                                ),
+                                const Spacer(),
+                                const Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "Total ", 
+                                        style: TextStyle(color: primaryDark, fontSize: 15),
+                                      ),
+                                      TextSpan(
+                                        text: "P2500",
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: secondaryDark),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 10,),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  decoration: const BoxDecoration(color: secondaryDark),
+                                  child: TextButton(
+                                    onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentMethodScreen()));},
+                                    child: const Text("Pay Bills (2)", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), ),
+                                  ),
+                                )
+                              ],
+                            ),
                           ],
-                        )
-                      ),
-                      Positioned(
-                        top: size.height * .88,
-                        child: Button(label: "PAY BILLS", press: (){ 
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentMethodScreen()));
-                        }, backgroundColor: secondaryDark, textSize: 18, isRounded: true,)
+                        ),
                       )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         )
       )

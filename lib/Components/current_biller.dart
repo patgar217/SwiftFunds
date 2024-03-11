@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
-import 'package:swiftfunds/Views/add_biller.dart';
+import 'package:swiftfunds/Views/edit_current_biller.dart';
 
 
 class CurrentBiller extends StatelessWidget {
@@ -15,7 +15,7 @@ class CurrentBiller extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap:(){
-        Navigator.of(context).push( MaterialPageRoute(builder: (context) => AddBillerScreen(billerName: billerName,)),);
+        Navigator.of(context).push( MaterialPageRoute(builder: (context) => EditCurrentBiller(billerName: billerName,)),);
       },
       child: Column(
         children: [

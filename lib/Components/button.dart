@@ -19,7 +19,7 @@ class Button extends StatelessWidget {
       margin: EdgeInsets.only(top: marginTop?? 15),
       width: widthRatio != null ? size.width * widthRatio! :  size.width * .9,
       height: textSize * 2 + 10,
-      decoration: BoxDecoration(color: backgroundColor, borderRadius: isRounded != null ? BorderRadius.circular(12) : null),
+      decoration: BoxDecoration(color: backgroundColor, borderRadius: (isRounded != null && isRounded!) ? BorderRadius.circular(12) : null),
       child: TextButton(
         onPressed: press,
         child: Text(label, style: TextStyle(color: Colors.white, fontSize: textSize, fontWeight: FontWeight.bold), ),
