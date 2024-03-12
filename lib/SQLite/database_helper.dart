@@ -5,10 +5,6 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper{
   final databaseName = "auth.db";
 
-  //Tables
-
-  //Don't put a comma at the end of a column in sqlite
-
   String user = '''
    CREATE TABLE users (
    usrId INTEGER PRIMARY KEY AUTOINCREMENT,

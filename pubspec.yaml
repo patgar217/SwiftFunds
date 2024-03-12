@@ -91,6 +91,68 @@ flutter:
     - assets/payments/securitybank.png
     - assets/payments/ucpb.png
     - assets/payments/unionbank.png
+    - assets/cable/cignal.png
+    - assets/cable/kalibo.jpeg
+    - assets/cable/satlite.png
+    - assets/cable/sky.png
+    - assets/cable/usatv.png
+    - assets/cc/aub.jpeg
+    - assets/cc/bdo.jpeg
+    - assets/cc/bpi.jpeg
+    - assets/cc/chinabank.jpeg
+    - assets/cc/citibank.png
+    - assets/cc/eastwest.jpeg
+    - assets/cc/maybank.png
+    - assets/cc/metrobank.png
+    - assets/cc/pnb.png
+    - assets/cc/robinsons.png
+    - assets/cc/securitybank.png
+    - assets/cc/unionbank.jpeg
+    - assets/electricalUtilities/akelco.jpeg
+    - assets/electricalUtilities/anteco.jpeg
+    - assets/electricalUtilities/capelco.jpeg
+    - assets/electricalUtilities/ceneco.jpeg
+    - assets/electricalUtilities/guimelco.jpeg
+    - assets/electricalUtilities/ileco1.jpeg
+    - assets/electricalUtilities/ileco2.jpeg
+    - assets/electricalUtilities/ileco3.jpeg
+    - assets/electricalUtilities/noceco.jpeg
+    - assets/electricalUtilities/noneco.jpeg
+    - assets/internet/converge.png
+    - assets/internet/globe.png
+    - assets/internet/pldt.png
+    - assets/internet/sky.png
+    - assets/internet/smart.png
+    - assets/load/globe.jpeg
+    - assets/load/dito.png
+    - assets/load/smart.png
+    - assets/load/tm.png
+    - assets/load/tnt.png
+    - assets/loan/asialink.png
+    - assets/loan/banko.png
+    - assets/loan/bdo.jpeg
+    - assets/loan/bpi.jpeg
+    - assets/loan/cashalo.png
+    - assets/loan/dragonloans.png
+    - assets/loan/homecredit.png
+    - assets/loan/imperial.png
+    - assets/loan/jmarketing.png
+    - assets/loan/motorstar.png
+    - assets/loan/skypay.jpeg
+    - assets/loan/tala.png
+    - assets/telecom/bayantel.jpeg
+    - assets/telecom/globe.jpeg
+    - assets/telecom/globehome.png
+    - assets/telecom/pldt.png
+    - assets/telecom/smart.png
+    - assets/waterUtilities/bacolod.jpeg
+    - assets/waterUtilities/buenavista.jpeg
+    - assets/waterUtilities/iloilo.png
+    - assets/waterUtilities/kalibo.jpeg
+    - assets/waterUtilities/numancia.jpeg
+    - assets/waterUtilities/roxas.png
+    
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
