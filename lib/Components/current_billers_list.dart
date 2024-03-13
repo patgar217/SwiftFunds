@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
-import 'package:swiftfunds/Components/current_biller.dart';
+import 'package:swiftfunds/Components/current_biller_widget.dart';
 
 
 class CurrentBillersList extends StatelessWidget {
@@ -33,12 +33,12 @@ class CurrentBillersList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                CurrentBiller(icon: Icons.lightbulb, billerName: "CAPEL"),
-                CurrentBiller(icon: Icons.water_drop, billerName: "WATER"),
-                CurrentBiller(icon: Icons.router, billerName: "INTERNET"),
-                CurrentBiller(icon: Icons.lightbulb, billerName: "CAPELCO"),
-                CurrentBiller(icon: Icons.water_drop, billerName: "WATER"),
-                CurrentBiller(icon: Icons.router, billerName: "INTERNET"),
+                CurrentBillerWidget(icon: Icons.lightbulb, billerName: "CAPEL"),
+                CurrentBillerWidget(icon: Icons.water_drop, billerName: "WATER"),
+                CurrentBillerWidget(icon: Icons.router, billerName: "INTERNET"),
+                CurrentBillerWidget(icon: Icons.lightbulb, billerName: "CAPELCO"),
+                CurrentBillerWidget(icon: Icons.water_drop, billerName: "WATER"),
+                CurrentBillerWidget(icon: Icons.router, billerName: "INTERNET"),
               ],
             ),
           )

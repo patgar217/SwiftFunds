@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/DragonPay/payment_method.dart';
-import 'package:swiftfunds/Models/users.dart';
-import 'package:swiftfunds/Components/bill.dart';
+import 'package:swiftfunds/Models/user.dart';
+import 'package:swiftfunds/Components/bill_widget.dart';
 import 'package:swiftfunds/Components/header.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/my_bills.dart';
-import 'package:swiftfunds/SQLite/database_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,10 +17,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Users? profile;
+  User? profile;
   bool isProfileLoaded = false;
 
-  final db = DatabaseHelper();
+  final db = DatabaseService();
   
   @override
   void initState() {
@@ -57,7 +57,7 @@ class HomeWidget extends StatefulWidget {
   });
 
   final Size size;
-  final Users? profile;
+  final User? profile;
 
   @override
   State<HomeWidget> createState() => _HomeWidgetState();
@@ -106,9 +106,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                       top: 250,
                       child: Column(
                         children: [
-                          Bill(billName: "CAPELCO", billId: "123456789", isChecked: true, dueDays: "3", amount: 1500.00, icon: Icons.lightbulb,),
-                          Bill(billName: "WATER", billId: "123456789", isChecked: true, dueDays: "5", amount: 1000.00, icon: Icons.water_drop),
-                          Bill(billName: "INTERNET", billId: "123456789", isChecked: false, dueDays: "7", amount: 500.00, icon: Icons.router)
+                          BillWidget(billName: "CAPELCO", billId: "123456789", isChecked: true, dueDays: "3", amount: 1500.00, icon: Icons.lightbulb,),
+                          BillWidget(billName: "WATER", billId: "123456789", isChecked: true, dueDays: "5", amount: 1000.00, icon: Icons.water_drop),
+                          BillWidget(billName: "INTERNET", billId: "123456789", isChecked: false, dueDays: "7", amount: 500.00, icon: Icons.router)
                         ],
                       )
                     ),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Views/biller_list.dart';
 
-class Category extends StatelessWidget {
-  const Category({
+class CategoryWidget extends StatelessWidget {
+  const CategoryWidget({
     super.key, required this.icon, required this.categoryName,
   });
 

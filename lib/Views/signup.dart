@@ -1,15 +1,11 @@
-import '../Components/button.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
+
+import '../Components/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Views/login.dart';
-import 'package:swiftfunds/Models/users.dart';
+import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/textfield.dart';
-import 'package:swiftfunds/SQLite/database_helper.dart';
-
-
-
-
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({ super.key });
@@ -27,10 +23,10 @@ class _SignUpState extends State<SignUpScreen> {
   
   bool isSignUpTrue = false;
 
-  final db = DatabaseHelper();
+  final db = DatabaseService();
   signUp()async{
     try{
-      var res = await db.createUser(Users(fullName: fullName.text,email: email.text,usrName: usrName.text, password: password.text));
+      var res = await db.createUser(User(fullName: fullName.text,email: email.text,username: usrName.text, password: password.text, swiftpoints: 0.00));
       if(res>0){
         if(!mounted)return;
         Navigator.push(context, MaterialPageRoute(builder: (context)=> const LoginScreen()));

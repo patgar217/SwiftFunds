@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/SQLite/database_helper.dart';
-import 'package:swiftfunds/Models/users.dart';
+import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,8 +12,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final db = DatabaseHelper();
-  Users? profile;
+  final db = DatabaseService();
+  User? profile;
   bool isProfileLoaded = false;
 
   @override
@@ -48,7 +48,7 @@ class ProfileWidget extends StatelessWidget {
     required this.profile,
   });
 
-  final Users? profile;
+  final User? profile;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class ProfileWidget extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.account_circle,size: 40),
                     subtitle: const Text("Username", style: TextStyle(color: Colors.grey),),
-                    title: Text(profile?.usrName??""),
+                    title: Text(profile?.username??""),
                   ),
               ],
             ),

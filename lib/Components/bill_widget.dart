@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Views/add_biller.dart';
 
-class Bill extends StatefulWidget {
+class BillWidget extends StatefulWidget {
   final String billName;
   final String billId;
   final String dueDays;
@@ -11,13 +11,13 @@ class Bill extends StatefulWidget {
   final double amount;
   final IconData icon;
 
-  const Bill({super.key, required this.billName, required this.billId, required this.dueDays, required this.isChecked, required this.amount, required this.icon});
+  const BillWidget({super.key, required this.billName, required this.billId, required this.dueDays, required this.isChecked, required this.amount, required this.icon});
 
   @override
-  State<Bill> createState() => _BillState();
+  State<BillWidget> createState() => _BillWidgetState();
 }
 
-class _BillState extends State<Bill> {
+class _BillWidgetState extends State<BillWidget> {
   late bool isBillPaid = widget.isChecked;
   
   @override

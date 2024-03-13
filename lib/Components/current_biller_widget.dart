@@ -3,11 +3,11 @@ import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Views/edit_current_biller.dart';
 
 
-class CurrentBiller extends StatelessWidget {
+class CurrentBillerWidget extends StatelessWidget {
   final IconData icon;
   final String billerName;
   
-  const CurrentBiller({
+  const CurrentBillerWidget({
     super.key, required this.icon, required this.billerName,
   });
 

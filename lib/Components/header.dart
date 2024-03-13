@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/Models/users.dart';
+import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Views/menu.dart';
 import 'package:swiftfunds/Views/profile.dart';
 import 'package:swiftfunds/Components/colors.dart';
@@ -12,7 +12,7 @@ class Header extends StatelessWidget {
   });
 
   final Size size;
-  final Users? profile;
+  final User? profile;
 
   @override
   Widget build(BuildContext context) {

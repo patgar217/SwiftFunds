@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
-import 'package:swiftfunds/Components/category.dart';
+import 'package:swiftfunds/Components/category_widget.dart';
 import 'package:swiftfunds/Components/current_billers_list.dart';
 
 
@@ -70,9 +70,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  Category(icon: Icons.lightbulb, categoryName: "Electric Utilities"),
-                                  Category(icon: Icons.water_drop, categoryName: "Water Utilities"),
-                                  Category(icon: Icons.router, categoryName: "Internet"),
+                                  CategoryWidget(icon: Icons.lightbulb, categoryName: "Electric Utilities"),
+                                  CategoryWidget(icon: Icons.water_drop, categoryName: "Water Utilities"),
+                                  CategoryWidget(icon: Icons.router, categoryName: "Internet"),
                                 ],
                               ),
                               const SizedBox(height: 15,),
@@ -80,9 +80,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  Category(icon: Icons.cable, categoryName: "Cable"),
-                                  Category(icon: Icons.credit_card, categoryName: "Credit Card"),
-                                  Category(icon: Icons.real_estate_agent, categoryName: "Loans"),
+                                  CategoryWidget(icon: Icons.cable, categoryName: "Cable"),
+                                  CategoryWidget(icon: Icons.credit_card, categoryName: "Credit Card"),
+                                  CategoryWidget(icon: Icons.real_estate_agent, categoryName: "Loans"),
                                 ],
                               ),
                               const SizedBox(height: 15,),
@@ -90,8 +90,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  const Category(icon: Icons.sim_card, categoryName: "Telecoms"),
-                                  const Category(icon: Icons.phone_in_talk, categoryName: "Mobile Load"),
+                                  const CategoryWidget(icon: Icons.sim_card, categoryName: "Telecoms"),
+                                  const CategoryWidget(icon: Icons.phone_in_talk, categoryName: "Mobile Load"),
                                   Container(
                                     width: (size.width * .80)/3,
                                     height: 110,

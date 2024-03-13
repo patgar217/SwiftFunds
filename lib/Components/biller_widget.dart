@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Views/add_biller.dart';
 
-class Biller extends StatelessWidget {
+class BillerWidget extends StatelessWidget {
   final IconData icon;
   final String billerName;
   
-  const Biller({
+  const BillerWidget({
     super.key, required this.icon, required this.billerName,
   });
 

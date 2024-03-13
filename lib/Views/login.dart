@@ -1,9 +1,10 @@
-import '../Models/users.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
+
+import '../Models/user.dart';
 import 'package:flutter/material.dart';
-import '../SQLite/database_helper.dart';
 import 'package:swiftfunds/Views/home.dart';
 import 'package:swiftfunds/Views/signup.dart';
-import 'package:swiftfunds/Components/button.dart';
+import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,11 +23,11 @@ class _LoginState extends State<LoginScreen> {
   final passwordController = TextEditingController();
   bool isLoginTrue = false;
 
-  final db = DatabaseHelper();
+  final db = DatabaseService();
   
   login() async{
       final prefs = await SharedPreferences.getInstance();
-      var res = await db.authenticate(Users(usrName: usrNameController.text, password: passwordController.text));
+      var res = await db.authenticate(User(username: usrNameController.text, password: passwordController.text));
       if(res == true){
         if(!mounted)return;
         prefs.setString("loggedUserName", usrNameController.text);

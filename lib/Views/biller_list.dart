@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/Components/biller.dart';
+import 'package:swiftfunds/Components/biller_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 
 class BillerListScreen extends StatelessWidget {
@@ -56,15 +56,15 @@ class BillerListScreen extends StatelessWidget {
                             children: [
                               Text(categoryName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), 
                               const SizedBox(height: 10),
-                              Biller(icon: icon, billerName: "Capiz Electrical Cooperative",),
+                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
                               const BillerDivider(),
-                              Biller(icon: icon, billerName: "Capiz Electrical Cooperative",),
+                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
                               const BillerDivider(),
-                              Biller(icon: icon, billerName: "Capiz Electrical Cooperative",),
+                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
                               const BillerDivider(),
-                              Biller(icon: icon, billerName: "Capiz Electrical Cooperative",),
+                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
                               const BillerDivider(),
-                              Biller(icon: icon, billerName: "Capiz Electrical Cooperative",),
+                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
                               const BillerDivider(),
                             ]
                           )

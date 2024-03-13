@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/Components/button.dart';
+import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/paid_bill.dart';
 import 'package:swiftfunds/Views/home.dart';
