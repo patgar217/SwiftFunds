@@ -9,11 +9,11 @@ String paymentToMap(Payment data) => json.encode(data.toMap());
 class Payment {
     int? id;
     int userId;
-    int totalAmount;
+    double totalAmount;
     double pointsEarned;
     double pointsRedeemed;
-    int? receiptNo;
     String paymentDate;
+    String status;
     List<Bill> bills;
 
     Payment({
@@ -22,20 +22,20 @@ class Payment {
         required this.totalAmount,
         required this.pointsEarned,
         required this.pointsRedeemed,
-        this.receiptNo,
         required this.paymentDate,
+        required this.status,
         required this.bills
     });
 
     factory Payment.fromMap(Map<String, dynamic> json) => Payment(
         id: json["id"],
         userId: json["userId"],
-        totalAmount: json["totalAmount"],
+        totalAmount: json["totalAmount"].toDouble(),
         pointsEarned: json["pointsEarned"].toDouble(),
-        pointsRedeemed: json["pointsRedeemed"],
-        receiptNo: json["receiptNo"],
+        pointsRedeemed: json["pointsRedeemed"].toDouble(),
         paymentDate: json["paymentDate"],
-        bills: json["bills"]
+        status: json["status"],
+        bills: []
     );
 
     Map<String, dynamic> toMap() => {
@@ -44,8 +44,7 @@ class Payment {
         "totalAmount": totalAmount,
         "pointsEarned": pointsEarned,
         "pointsRedeemed": pointsRedeemed,
-        "receiptNo": receiptNo,
         "paymentDate": paymentDate,
-        "bills": bills
+        "status": status
     };
 }

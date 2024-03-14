@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:swiftfunds/Models/current_biller.dart';
+
 Bill billFromMap(String str) => Bill.fromMap(json.decode(str));
 
 String billToMap(Bill data) => json.encode(data.toMap());
@@ -11,6 +13,7 @@ class Bill {
     String dueDate;
     double amount;
     String status;
+    CurrentBiller? currentBiller;
 
     Bill({
         this.id,
@@ -19,6 +22,7 @@ class Bill {
         required this.dueDate,
         required this.amount,
         required this.status,
+        this.currentBiller
     });
 
     factory Bill.fromMap(Map<String, dynamic> json) => Bill(

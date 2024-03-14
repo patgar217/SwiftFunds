@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/current_biller_widget.dart';
+import 'package:swiftfunds/Models/current_biller.dart';
 
 
-class CurrentBillersList extends StatelessWidget {
+class CurrentBillersList extends StatefulWidget {
   const CurrentBillersList({
     super.key,
+    required this.currentBillers
   });
 
+  final List<CurrentBiller> currentBillers;
+
+  @override
+  State<CurrentBillersList> createState() => _CurrentBillersListState();
+}
+
+class _CurrentBillersListState extends State<CurrentBillersList> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +36,19 @@ class CurrentBillersList extends StatelessWidget {
           Radius.circular(12.0),
         ),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Current Billers",style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-          SizedBox(height: 5,),
+          const Text("Current Billers",style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5,),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
-              children: [
-                CurrentBillerWidget(icon: Icons.lightbulb, billerName: "CAPEL"),
-                CurrentBillerWidget(icon: Icons.water_drop, billerName: "WATER"),
-                CurrentBillerWidget(icon: Icons.router, billerName: "INTERNET"),
-                CurrentBillerWidget(icon: Icons.lightbulb, billerName: "CAPELCO"),
-                CurrentBillerWidget(icon: Icons.water_drop, billerName: "WATER"),
-                CurrentBillerWidget(icon: Icons.router, billerName: "INTERNET"),
-              ],
+              children: widget.currentBillers.map((biller) {
+                return CurrentBillerWidget(image: biller.logo, billerName: biller.nickname);
+              }).toList(),
             ),
           )
         ],

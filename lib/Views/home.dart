@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:swiftfunds/DragonPay/payment_method.dart';
+import 'package:swiftfunds/Models/bill.dart';
+import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Components/bill_widget.dart';
 import 'package:swiftfunds/Components/header.dart';
@@ -17,8 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  User? profile;
+  late User profile;
   bool isProfileLoaded = false;
+  late List<Bill> pendingBills;
 
   final db = DatabaseService();
   
@@ -32,7 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     String loggedUserName = prefs.getString("loggedUserName") ?? "";
 
-    profile = await db.getUser(loggedUserName);
+    profile = (await db.getUser(loggedUserName))!;
+
+    prefs.setInt("loggedId", profile.userId!);
+
+    pendingBills = await db.getBillsByUserIdAndStatus(profile.userId!, "PENDING");
     setState(() {
       isProfileLoaded = true;
     });
@@ -40,9 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     if (isProfileLoaded) {
-      return HomeWidget(size: size, profile: profile);
+      return HomeWidget(profile: profile, pendingBills: pendingBills,);
     } else {
       return const Center(child: CircularProgressIndicator()); // Show loading indicator
     }
@@ -51,22 +58,74 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({
-    super.key,
-    required this.size,
-    required this.profile,
+    super.key, this.profile, required this.pendingBills,
   });
 
-  final Size size;
   final User? profile;
+  final List<Bill> pendingBills;
+
+  int getDaysUntilDate(String dateString) {
+    final formattedDate = DateFormat('yyyy-MM-dd').parse(dateString);
+
+    final now = DateTime.now();
+
+    final difference = formattedDate.difference(now);
+
+    return difference.inDays;
+  }
+
+  double getTotalBill() {
+    double total = 0.0;
+    for (var bill in pendingBills) {
+      total += bill.amount;
+    }
+    return total;
+  }
 
   @override
   State<HomeWidget> createState() => _HomeWidgetState();
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-
+  final db = DatabaseService();
   bool isRedeem = false;
   bool isAll = false;
+
+  List<Bill> checkedBills = [];
+  double checkedTotal = 0.00;
+
+  void triggerCheck(bool isChecked, Bill bill ){
+    if(isChecked){
+      setState(() {
+        checkedBills.add(bill);
+        checkedTotal += bill.amount;
+      });
+    }else{
+      setState(() {
+        checkedBills.remove(bill);
+        checkedTotal -= bill.amount;
+      });
+    }
+  }
+  
+
+  void createPayment() async {
+    Payment initialPayment =  Payment(
+      userId: widget.profile!.userId!, 
+      totalAmount: checkedTotal,
+      pointsEarned: 0.00,
+      pointsRedeemed: 0.00,
+      paymentDate: "",
+      status: "PENDING",
+      bills: checkedBills
+    );
+
+    Payment result = await db.createPayment(initialPayment);
+    result.bills = checkedBills;
+
+    if(!mounted)return;
+    Navigator.push(context, MaterialPageRoute(builder: (context)  => PaymentMethodScreen(payment: result)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,20 +155,30 @@ class _HomeWidgetState extends State<HomeWidget> {
                     ),
                     Positioned(
                       top: 30,
-                      child: Header(size: widget.size, profile: widget.profile),
+                      child: Header(size: size, profile: widget.profile),
                     ),
                     Positioned(
                       top: 80,
-                      child: MyBills(size: widget.size),
+                      child: MyBills(profile: widget.profile, totalBills: widget.getTotalBill(),),
                     ),
-                    const Positioned(
+                    Positioned(
                       top: 250,
                       child: Column(
-                        children: [
-                          BillWidget(billName: "CAPELCO", billId: "123456789", isChecked: true, dueDays: "3", amount: 1500.00, icon: Icons.lightbulb,),
-                          BillWidget(billName: "WATER", billId: "123456789", isChecked: true, dueDays: "5", amount: 1000.00, icon: Icons.water_drop),
-                          BillWidget(billName: "INTERNET", billId: "123456789", isChecked: false, dueDays: "7", amount: 500.00, icon: Icons.router)
-                        ],
+                        children: widget.pendingBills.map((bill) {
+                          final currentBiller = bill.currentBiller;
+                          if(currentBiller != null){
+                          return BillWidget(
+                              currNickname: currentBiller.nickname,
+                              currId: currentBiller.acctNumber,
+                              isChecked: false,
+                              dueDays: widget.getDaysUntilDate(bill.dueDate),
+                              amount: bill.amount,
+                              image: currentBiller.logo,
+                              triggerCheck: triggerCheck,
+                              bill: bill
+                            );}
+                            return Text(bill.currentBillerId.toString());
+                        }).toList(),
                       )
                     ),
                     Positioned(
@@ -142,43 +211,29 @@ class _HomeWidgetState extends State<HomeWidget> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const SizedBox(width: 15,),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      height: 15,
-                                      width: 15,
-                                      child: Checkbox(
-                                        value: isAll, 
-                                        onChanged: (value){setState(() => isAll = !isAll);}
-                                      )
-                                    ),
-                                    const SizedBox(width: 10,),
-                                    const Text("All", style: TextStyle(fontSize: 15),)
-                                  ],
-                                ),
-                                const Spacer(),
-                                const Text.rich(
+                                Text.rich(
                                   TextSpan(
                                     children: [
-                                      TextSpan(
+                                      const TextSpan(
                                         text: "Total ", 
-                                        style: TextStyle(color: primaryDark, fontSize: 15),
+                                        style: TextStyle(color: primaryDark, fontSize: 18),
                                       ),
                                       TextSpan(
-                                        text: "P2500",
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: secondaryDark),
+                                        text: "₱${checkedTotal.toStringAsFixed(2)}",
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: secondaryDark),
                                       ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(width: 10,),
+                                const Spacer(),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  decoration: const BoxDecoration(color: secondaryDark),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  decoration:  BoxDecoration(color: checkedBills.isEmpty ? Colors.grey : secondaryDark),
                                   child: TextButton(
-                                    onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentMethodScreen()));},
-                                    child: const Text("Pay Bills (2)", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), ),
+                                    onPressed: (){
+                                      checkedBills.isEmpty ? null : createPayment();
+                                      },
+                                    child: Text("Pay Bills (${checkedBills.length})", style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold), ),
                                   ),
                                 )
                               ],

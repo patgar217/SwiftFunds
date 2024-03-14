@@ -5,7 +5,7 @@ Category categoryFromMap(String str) => Category.fromMap(json.decode(str));
 String categoryToMap(Category data) => json.encode(data.toMap());
 
 class Category {
-    final String id;
+    final int id;
     final String name;
     final String logo;
 

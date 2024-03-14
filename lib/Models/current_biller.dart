@@ -15,6 +15,7 @@ class CurrentBiller {
     bool isRepeating;
     String? frequency;
     int? noOfPayments;
+    String logo;
 
     CurrentBiller({
         this.id,
@@ -27,6 +28,7 @@ class CurrentBiller {
         required this.isRepeating,
         this.frequency,
         this.noOfPayments,
+        required this.logo
     });
 
     factory CurrentBiller.fromMap(Map<String, dynamic> json) => CurrentBiller(
@@ -37,9 +39,10 @@ class CurrentBiller {
         acctName: json["acctName"],
         acctNumber: json["acctNumber"],
         acctType: json["acctType"],
-        isRepeating: json["isRepeating"],
+        isRepeating: json["isRepeating"] == 0 ? false : true,
         frequency: json["frequency"],
         noOfPayments: json["noOfPayments"],
+        logo: json["logo"] ?? "",
     );
 
     Map<String, dynamic> toMap() => {
@@ -53,5 +56,6 @@ class CurrentBiller {
         "isRepeating": isRepeating,
         "frequency": frequency,
         "noOfPayments": noOfPayments,
+        "logo":logo
     };
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/DragonPay/bank_account.dart';
+import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/Models/payment_methods.dart';
 import 'package:swiftfunds/Views/payment_result.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class BankPaymentScreen extends StatefulWidget {
   final PaymentMethod paymentMethod;
-  const BankPaymentScreen({super.key, required this.paymentMethod});
+  final Payment payment;
+  const BankPaymentScreen({super.key, required this.paymentMethod, required this.payment});
 
   @override
   State<BankPaymentScreen> createState() => _BankPaymentScreenState();
@@ -44,16 +46,16 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
               ),
               const SizedBox(height: 15,),
               RichText(
-                text: const TextSpan(
-                  style: TextStyle(fontFamily: "Verdana",fontSize: 15.0, color: Colors.black),
+                text: TextSpan(
+                  style: const TextStyle(fontFamily: "Verdana",fontSize: 15.0, color: Colors.black),
                   children: [
-                    TextSpan(text: 'Ref #: '),
-                    TextSpan(
+                    const TextSpan(text: 'Ref #: '),
+                    const TextSpan(
                       text: "MYLJKWWB98", style: TextStyle(color: Color(0xFF003399))
                     ),
-                    TextSpan(text: ' : PHP'),
-                    TextSpan(text: '2500'),
-                    TextSpan(text: ' for Dragonpay payment.'),
+                    const TextSpan(text: ' : PHP'),
+                    TextSpan(text: widget.payment.totalAmount.toStringAsFixed(2)),
+                    const TextSpan(text: ' for Dragonpay payment.'),
                   ],
                 ),
               ),
@@ -144,7 +146,7 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                     ),
                     child: TextButton(
                       onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> BankAccountScreen(paymentMethod: widget.paymentMethod)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> BankAccountScreen(paymentMethod: widget.paymentMethod, payment: widget.payment,)));
                       },
                       child: const Text("Continue", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                     ),
@@ -163,7 +165,7 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                     ),
                     child: TextButton(
                       onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: false,)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: false,payment: widget.payment)));
                       },
                       child: const Text("Cancel", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                     ),

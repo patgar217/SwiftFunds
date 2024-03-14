@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Views/categories.dart';
 import 'package:swiftfunds/Components/colors.dart';
 
 
 class MyBills extends StatelessWidget {
   const MyBills({
-    super.key,
-    required this.size,
+    super.key, required this.profile, required this.totalBills
   });
 
-  final Size size;
+  final User? profile;
+  final double totalBills;
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
       width: size.width * .9,
       height: 150,
@@ -26,15 +28,25 @@ class MyBills extends StatelessWidget {
         width: size.width * .9,
         child: Row(
           children: [
-            const Column(
+            Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("My Bills", style: TextStyle(color: Colors.white, fontSize: 20),),
-                Spacer(),
-                Text("Total Bills Due", style: TextStyle(color: Colors.white, fontSize: 15)),
-                Text("P3000", style: TextStyle(color: Colors.white, fontSize: 35, fontWeight: FontWeight.bold)),
+                const Text("My Bills", style: TextStyle(color: Colors.white, fontSize: 20),),
+                const Spacer(),
+                const Text("Total Bills Due", style: TextStyle(color: Colors.white, fontSize: 15)),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.white, fontSize: 35, fontWeight: FontWeight.bold),
+                    children: [
+                      const TextSpan(text: '₱'),
+                      TextSpan(
+                        text: totalBills.toStringAsFixed(2)
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
             const Spacer(),
@@ -60,7 +72,7 @@ class MyBills extends StatelessWidget {
                 ),
                 const Spacer(),
                 const Text("SwiftPoints", style: TextStyle(color: Colors.white, fontSize: 15)),
-                const Text("0.00", style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                Text(profile!.swiftpoints!.toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
               ],
             ),
           ],

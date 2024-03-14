@@ -43,7 +43,8 @@ class DatabaseHelper{
    acctType TEXT,
    isRepeating BOOLEAN,
    frequency TEXT,
-   noOfPayments INTEGER
+   noOfPayments INTEGER,
+   logo TEXT
    )
    ''';
 
@@ -65,8 +66,8 @@ class DatabaseHelper{
    totalAmount REAL,
    pointsEarned REAL,
    pointsRedeemed REAL,
-   receiptNo INTEGER,
-   paymentDate TEXT
+   paymentDate TEXT,
+   status TEXT
    )
    ''';
 
@@ -121,35 +122,35 @@ class DatabaseHelper{
     final categories = [
       {
         "name": "Electrical Utilities",
-        "logo": "lightbulb"
+        "logo": "0xe37b"
       },
       {
         "name": "Water Utilities",
-        "logo": "water_drop"
+        "logo": "0xf05a2"
       },
       {
         "name": "Internet",
-        "logo": "router"
+        "logo": "0xe542"
       },
       {
         "name": "Cable",
-        "logo": "cable"
+        "logo": "0xe11e"
       },
       {
         "name": "Credit Card",
-        "logo": "credit_card"
+        "logo": "0xe19f"
       },
       {
         "name": "Loans",
-        "logo": "real_estate_agent"
+        "logo": "0xe50b"
       },
       {
         "name": "Telecoms",
-        "logo": "sim_card"
+        "logo": "0xe5b7"
       },
       {
         "name": "Mobile Load",
-        "logo": "phone_in_talk"
+        "logo": "0xe4a9"
       },
     ];
 
@@ -556,7 +557,8 @@ class DatabaseHelper{
           "acctType":null,
           "isRepeating": 0,
           "frequency": null,
-          "noOfPayments": null
+          "noOfPayments": null,
+          "logo": "assets/electricalUtilities/capelco.jpeg"
       },
       {
           
@@ -568,7 +570,8 @@ class DatabaseHelper{
           "acctType": null,
           "isRepeating": 0,
           "frequency": null,
-          "noOfPayments": null
+          "noOfPayments": null,
+          "logo": "assets/waterUtilities/roxas.png",
       },
       {
           
@@ -580,7 +583,8 @@ class DatabaseHelper{
           "acctType": "ACCOUNT_NO",
           "isRepeating": 0,
           "frequency": "MONTHLY",
-          "noOfPayments": 3
+          "noOfPayments": 3,
+          "logo": "assets/internet/globe.png",
       }
     ];
 
@@ -611,7 +615,7 @@ class DatabaseHelper{
           
           "userId": 1,
           "currentBillerId": 2,
-          "dueDate":"2024-03-30",
+          "dueDate":"2024-03-28",
           "amount": 500.00,
           "status": "PENDING",
       },
@@ -619,7 +623,7 @@ class DatabaseHelper{
           
           "userId": 1,
           "currentBillerId": 3,
-          "dueDate":"2024-03-30",
+          "dueDate":"2024-03-29",
           "amount": 1000.00,
           "status": "PENDING",
       },
@@ -638,8 +642,8 @@ class DatabaseHelper{
           "totalAmount": 1000.00,
           "pointsEarned": 0.10,
           "pointsRedeemed": 0.00,
-          "receiptNo": 1,
-          "paymentDate": "2024-03-12",
+          "paymentDate": "2024-03-12 10:00 AM",
+          "status": "SUCCESS"
       };
 
     try {

@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:swiftfunds/DragonPay/bank_payment.dart';
 import 'package:swiftfunds/DragonPay/card_payment.dart';
 import 'package:swiftfunds/DragonPay/ewallet_payment.dart';
+import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/Models/payment_methods.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
-  const PaymentMethodScreen({super.key});
+  const PaymentMethodScreen({super.key, required this.payment});
+
+  final Payment payment;
 
   @override
   State<PaymentMethodScreen> createState() => _PaymentMethodScreenState();
@@ -34,18 +37,22 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 fit: BoxFit.cover, // This ensures the image fills the container
               ),
               const SizedBox(height: 15,),
-              const Text.rich(
+              Text.rich(
                 TextSpan(
-                  style: TextStyle(fontSize: 15, fontFamily: "Verdana"),
+                  style: const TextStyle(fontSize: 15, fontFamily: "Verdana"),
                   children: [
-                    TextSpan(
+                    const TextSpan(
                       text: "SwiftFunds is requesting for ", 
                     ),
-                    TextSpan(
-                      text: "PHP 2500.00",
+                    const TextSpan(
+                      text: "PHP ",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
+                      text: widget.payment.totalAmount.toStringAsFixed(2),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const TextSpan(
                       text: " [TEST ONLY]",
                       style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)
                     ),
@@ -146,11 +153,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                     });
                     if(isAgree){
                       if(selectedValue.type == PaymentType.bank){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> BankPaymentScreen(paymentMethod: selectedValue)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> BankPaymentScreen(paymentMethod: selectedValue, payment: widget.payment)));
                       } else if(selectedValue.type == PaymentType.card){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> CardPaymentScreen(paymentMethod: selectedValue)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> CardPaymentScreen(paymentMethod: selectedValue, payment: widget.payment)));
                       } else if(selectedValue.type == PaymentType.eWallet){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> EWalletPaymentScreen(paymentMethod: selectedValue)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> EWalletPaymentScreen(paymentMethod: selectedValue, payment: widget.payment)));
                       }
                     }
                   },

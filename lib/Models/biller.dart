@@ -5,8 +5,8 @@ Biller billerFromMap(String str) => Biller.fromMap(json.decode(str));
 String billerToMap(Biller data) => json.encode(data.toMap());
 
 class Biller {
-    final String id;
-    final String categoryId;
+    final int id;
+    final int categoryId;
     final String logo;
     final String name;
 

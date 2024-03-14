@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/Models/payment_methods.dart';
 import 'package:swiftfunds/Views/payment_result.dart';
 
 class CardPaymentScreen extends StatefulWidget {
   final PaymentMethod paymentMethod;
-  const CardPaymentScreen({super.key, required this.paymentMethod});
+  final Payment payment;
+  const CardPaymentScreen({super.key, required this.paymentMethod, required this.payment});
 
   @override
   State<CardPaymentScreen> createState() => _CardPaymentScreenState();
@@ -90,10 +92,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
               ),
             ),
             const SizedBox(height: 3,),
-            const Center(
+            Center(
               child: Text(
-                "PHP 2500.00",
-                style: TextStyle(fontSize: 50, fontWeight: FontWeight.w300, color: Color(0xFF4573FF), fontFamily: "OpenSans"),
+                "PHP ${widget.payment.totalAmount.toStringAsFixed(2)}",
+                style: const TextStyle(fontSize: 50, fontWeight: FontWeight.w300, color: Color(0xFF4573FF), fontFamily: "OpenSans"),
               )
             ),
             const SizedBox(height: 30,),
@@ -284,7 +286,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                       ),
                                       child: TextButton(
                                         onPressed: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: true,)));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: true, payment: widget.payment)));
                                         },
                                         child: const Text(
                                           "Pay Now", 
@@ -305,7 +307,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                       ),
                                       child: TextButton(
                                         onPressed: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: false,)));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: false,payment: widget.payment)));
                                         },
                                         child: const Text("Cancel", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                                       ),

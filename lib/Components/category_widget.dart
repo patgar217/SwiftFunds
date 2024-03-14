@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
+import 'package:swiftfunds/Models/category.dart';
 import 'package:swiftfunds/Views/biller_list.dart';
 
 class CategoryWidget extends StatelessWidget {
   const CategoryWidget({
-    super.key, required this.icon, required this.categoryName,
+    super.key, required this.category
   });
-
-  final String categoryName;
-  final IconData icon;
+  final Category category;
 
   @override
   Widget build(BuildContext context) {
+    IconData icon = IconData(int.parse(category.logo), fontFamily: 'MaterialIcons');
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: (){Navigator.of(context).push( MaterialPageRoute(builder: (context) => BillerListScreen(categoryName: categoryName, icon: icon,), ),);},
+      onTap: (){Navigator.of(context).push( MaterialPageRoute(builder: (context) => BillerListScreen(categoryId: category.id, categoryName: category.name, icon: icon,), ),);},
       child: Container(
         width: (size.width * .80)/3,
         height: 110,
@@ -28,7 +28,7 @@ class CategoryWidget extends StatelessWidget {
           children: [
             Icon(icon, size: 60, color: backgroundColor,),
             const SizedBox(height: 5,),
-            Text(categoryName,style: const TextStyle(fontSize: 15, color: Colors.white, height: 1), textAlign: TextAlign.center,)
+            Text(category.name, style: const TextStyle(fontSize: 15, color: Colors.white, height: 1), textAlign: TextAlign.center,)
           ],
         )
       ),

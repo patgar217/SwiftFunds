@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/Models/payment_methods.dart';
 import 'package:swiftfunds/Views/payment_result.dart';
 
 class EWalletPaymentScreen extends StatefulWidget {
   final PaymentMethod paymentMethod;
-  const EWalletPaymentScreen({super.key, required this.paymentMethod});
+  final Payment payment;
+  const EWalletPaymentScreen({super.key, required this.paymentMethod, required this.payment});
 
   @override
   State<EWalletPaymentScreen> createState() => _EWalletPaymentScreenState();
@@ -129,9 +131,9 @@ class _EWalletPaymentScreenState extends State<EWalletPaymentScreen> {
                       ),
                       child: TextButton(
                         onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: true,)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: true, payment: widget.payment)));
                         },
-                        child: const Text("Pay P2500.00", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
+                        child: Text("Pay ₱${widget.payment.totalAmount.toStringAsFixed(2)}", style: const TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                       ),
                     ),
                     const SizedBox(width: 10,),
@@ -148,7 +150,7 @@ class _EWalletPaymentScreenState extends State<EWalletPaymentScreen> {
                       ),
                       child: TextButton(
                         onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const PaymentResultScreen(isSuccess: false,)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: false,payment: widget.payment)));
                         },
                         child: const Text("Cancel", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                       ),

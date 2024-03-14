@@ -4,12 +4,13 @@ import 'package:swiftfunds/Views/edit_current_biller.dart';
 
 
 class CurrentBillerWidget extends StatelessWidget {
-  final IconData icon;
+  final String image;
   final String billerName;
   
   const CurrentBillerWidget({
-    super.key, required this.icon, required this.billerName,
+    super.key, required this.image, required this.billerName,
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +26,14 @@ class CurrentBillerWidget extends StatelessWidget {
               shape: BoxShape.circle,
               color: secondaryDark,
             ),
-            padding: const EdgeInsets.all(5.0), // Adjust padding as needed
-            child: Icon(
-              icon,
+            padding: const EdgeInsets.all(5.0),
+            child: image != "" ? CircleAvatar(
+              backgroundImage: AssetImage(image),
+              radius: 20,
+            ) : const Icon(
+              Icons.account_balance_wallet_outlined,
               color: backgroundColor,
-              size: 35.0,
+              size: 35.0
             ),
           ),
           const SizedBox(height: 5,),

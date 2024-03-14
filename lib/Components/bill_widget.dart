@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/colors.dart';
+import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Views/add_biller.dart';
 
 class BillWidget extends StatefulWidget {
-  final String billName;
-  final String billId;
-  final String dueDays;
+  final String currNickname;
+  final String currId;
+  final int dueDays;
   final bool isChecked;
   final double amount;
-  final IconData icon;
+  final String image;
+  final Bill bill;
+  final Function(bool, Bill) triggerCheck;
 
-  const BillWidget({super.key, required this.billName, required this.billId, required this.dueDays, required this.isChecked, required this.amount, required this.icon});
+  const BillWidget({super.key, required this.currNickname, required this.currId, required this.dueDays, required this.isChecked, required this.amount, required this.image, required this.triggerCheck, required this.bill});
 
   @override
   State<BillWidget> createState() => _BillWidgetState();
@@ -26,15 +29,15 @@ class _BillWidgetState extends State<BillWidget> {
     return GestureDetector(
       onTap: (){
         final now = DateTime.now();
-        final dueDate = now.add(Duration(days: int.parse(widget.dueDays)));
+        final dueDate = now.add(Duration(days: widget.dueDays));
 
         final formatter = DateFormat('MM/dd/yyyy');
         final formattedDate = formatter.format(dueDate);
         Navigator.of(context).push( MaterialPageRoute(builder: (context) => AddBillerScreen(
-          billerName: widget.billName,
-          billName: widget.billName,
-          acctName: widget.billName,
-          acctNumber: widget.billId,
+          billerName: widget.currNickname,
+          billName: widget.currNickname,
+          acctName: widget.currNickname,
+          acctNumber: widget.currId,
           amount: widget.amount.toString(),
           dueDate: formattedDate,
         ), ),);
@@ -62,18 +65,22 @@ class _BillWidgetState extends State<BillWidget> {
                       Container(
                         width: 55,
                         height: 55,
+                        padding: const EdgeInsets.all(3),
                         decoration: const BoxDecoration(
                           color: secondaryDark,
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
-                        child: Icon(widget.icon, color: backgroundColor, size:45),
+                        child: widget.image != "" ? CircleAvatar(
+                          backgroundImage: AssetImage(widget.image),
+                          radius: 10,
+                        ): const Icon(Icons.account_balance_wallet, color: backgroundColor, size:45),
                       ),
                       const SizedBox(width: 10,),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(widget.billName, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold, height: 1),), 
-                          Text("ID: ${widget.billId}", style: const TextStyle(fontSize: 15))
+                          Text(widget.currNickname, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold, height: 1),), 
+                          Text("ID: ${widget.currId}", style: const TextStyle(fontSize: 15))
                         ]
                       )
                     ],
@@ -87,7 +94,7 @@ class _BillWidgetState extends State<BillWidget> {
                           text: "Due in ", 
                         ),
                         TextSpan(
-                          text: widget.dueDays,
+                          text: widget.dueDays.toString(),
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const TextSpan(
@@ -110,6 +117,7 @@ class _BillWidgetState extends State<BillWidget> {
                       activeColor: secondaryDark,
                       value: isBillPaid,
                       onChanged: (value){
+                        widget.triggerCheck(!isBillPaid, widget.bill);
                         setState(() {
                           isBillPaid = !isBillPaid;
                         });
@@ -117,7 +125,17 @@ class _BillWidgetState extends State<BillWidget> {
                     ),
                    ),
                   const Spacer(),
-                  Text("P${widget.amount}", style: const TextStyle(color: Colors.black, fontSize: 27, fontWeight: FontWeight.bold)),
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.black, fontSize: 27, fontWeight: FontWeight.bold),
+                      children: [
+                        const TextSpan(text: '₱'),
+                        TextSpan(
+                          text: widget.amount.toStringAsFixed(2)
+                        )
+                      ],
+                    ),
+                  )
                 ],
               ),
             ],

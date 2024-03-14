@@ -1,18 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/paid_bill.dart';
+import 'package:swiftfunds/Models/payment.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
 import 'package:swiftfunds/Views/home.dart';
 
 class PaymentResultScreen extends StatefulWidget {
   final bool isSuccess;
-  const PaymentResultScreen({super.key, required this.isSuccess});
+  final Payment payment;
+  const PaymentResultScreen({super.key, required this.isSuccess, required this.payment});
 
   @override
   State<PaymentResultScreen> createState() => _PaymentResultScreenState();
 }
 
 class _PaymentResultScreenState extends State<PaymentResultScreen> {
+  final db = DatabaseService();
+  
+  @override
+  void initState() {
+    super.initState();
+    updatePayment();
+  }
+
+  void updatePayment()async{
+    DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat('yyyy/MM/dd HH:mm a');
+    String formattedDateTime = formatter.format(now);
+
+    Payment payment = widget.payment;
+    payment.paymentDate = formattedDateTime;
+    payment.pointsEarned = widget.isSuccess ? payment.totalAmount * 0.0001 : 0.00;
+    payment.pointsRedeemed = widget.isSuccess ? payment.pointsRedeemed : 0.00;
+    payment.status = widget.isSuccess ? "SUCCESS" : "FAILED";
+    
+    var res = await db.updatePayment(widget.payment.id!, payment);
+
+    if(res>0){
+      await db.updateUserPoints(payment.userId, payment.pointsEarned, payment.pointsRedeemed);
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -80,42 +109,57 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                                   (widget.isSuccess ? "Success!" : "Failed!"),
                                   style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                                 ),
-                                const Text.rich(
+                                Text.rich(
                                   TextSpan(
-                                    style: TextStyle(fontSize: 20),
+                                    style: const TextStyle(fontSize: 20),
                                     children: [
-                                      TextSpan(
+                                      const TextSpan(
                                         text: "Receipt No. ", 
                                       ),
                                       TextSpan(
-                                        text: "000001",
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                        text: '${widget.payment.id}'.padLeft(7, '0'),
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
                                 ),
                                 const SizedBox(height: 20,),
-                                PaidBill(
-                                  billerId: "123456",
-                                  billerName: "CAPELCO",
-                                  amount: 1500.00,
-                                  isPaid: widget.isSuccess,
-                                ),
-                                const Divider(
-                                  color: Colors.black, 
-                                  height: 20, 
-                                  thickness: 1,
-                                ),
-                                PaidBill(
-                                  billerId: "123456",
-                                  billerName: "WATER",
-                                  amount: 1000.00,
-                                  isPaid: widget.isSuccess,
+                                Column(
+                                  children: widget.payment.bills.map((bill) {
+                                    return PaidBill(billerId: bill.currentBiller!.acctNumber.toString(), billerName: bill.currentBiller!.nickname, amount: bill.amount, isPaid: widget.isSuccess,);
+                                  }).toList(),
                                 ),
                                 const Spacer(),
                                 const Text("Total Amount", style: TextStyle(fontSize: 18),),
-                                const Text("P2500.00",style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
-                                const SizedBox(height: 50,),
+                                Text("₱${widget.payment.totalAmount.toStringAsFixed(2)}",style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
+                                widget.isSuccess ? Column(
+                                  children: [
+                                    const SizedBox(height: 20,),
+                                    RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(color: Colors.black, fontSize: 12),
+                                        children: [
+                                          const TextSpan(text: 'Points Earned: '),
+                                          TextSpan(
+                                            text: widget.payment.pointsEarned.toStringAsFixed(2)
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(color: Colors.black, fontSize: 12),
+                                        children: [
+                                          const TextSpan(text: 'Points Redeemed: '),
+                                          TextSpan(
+                                            text: widget.payment.pointsRedeemed.toStringAsFixed(2)
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 50,)
+                                  ],
+                                ) : const SizedBox(height: 50,),
                               ]
                             ),
                           )

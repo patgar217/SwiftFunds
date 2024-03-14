@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/category_widget.dart';
 import 'package:swiftfunds/Components/current_billers_list.dart';
-
-
+import 'package:swiftfunds/Models/category.dart';
+import 'package:swiftfunds/Models/current_biller.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -13,10 +15,55 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
+
+  late List<CurrentBiller> currentBillers;
+  late List<Category> categories;
+  bool isLoaded = false;
+  
+  final db = DatabaseService();
+
+  @override
+  void initState() {
+    super.initState();
+    loadCategoriesAndBillers();
+  }
+
+  loadCategoriesAndBillers() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    int loggedId = prefs.getInt("loggedId")!;
+
+    currentBillers = await db.getCurrentBillersByUserId(loggedId);
+    categories = await db.getCategories();
+
+    setState(() {
+      isLoaded = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoaded) {
+      return CategoriesScreenWidget(currentBillers: currentBillers, categories: categories,);
+    } else {
+      return const Center(child: CircularProgressIndicator());
+    }
+  }
+}
+
+class CategoriesScreenWidget extends StatelessWidget {
+  const CategoriesScreenWidget({
+    super.key,
+    required this.currentBillers,
+    required this.categories
+  });
+
+  final List<Category> categories;
+  final List<CurrentBiller> currentBillers;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Center(
@@ -45,9 +92,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         left: size.width * .05,
                         child: const Text("Add Bill",style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
                       ),
-                      const Positioned(
+                      Positioned(
                         top: 70,
-                        child: CurrentBillersList()
+                        child: CurrentBillersList(currentBillers: currentBillers)
                       ),
                       Positioned(
                         top:205,
@@ -63,42 +110,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
                             children: [
                               const Text("Categories",style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                               const SizedBox(height: 5,),
-                              const Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  CategoryWidget(icon: Icons.lightbulb, categoryName: "Electric Utilities"),
-                                  CategoryWidget(icon: Icons.water_drop, categoryName: "Water Utilities"),
-                                  CategoryWidget(icon: Icons.router, categoryName: "Internet"),
-                                ],
-                              ),
-                              const SizedBox(height: 15,),
-                              const Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  CategoryWidget(icon: Icons.cable, categoryName: "Cable"),
-                                  CategoryWidget(icon: Icons.credit_card, categoryName: "Credit Card"),
-                                  CategoryWidget(icon: Icons.real_estate_agent, categoryName: "Loans"),
-                                ],
-                              ),
-                              const SizedBox(height: 15,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  const CategoryWidget(icon: Icons.sim_card, categoryName: "Telecoms"),
-                                  const CategoryWidget(icon: Icons.phone_in_talk, categoryName: "Mobile Load"),
-                                  Container(
-                                    width: (size.width * .80)/3,
-                                    height: 110,
-                                    color: backgroundColor,
-                                    padding: const EdgeInsets.all(5.0)
-                                    )
-                                ],
+                              GridView.count(
+                                crossAxisCount: 3, // Adjust for desired number of columns
+                                mainAxisSpacing: 15.0, // Spacing between rows
+                                crossAxisSpacing: 15.0,
+                                shrinkWrap: true,
+                                children: categories.map((category) {
+                                  return CategoryWidget(category: category);
+                                }).toList(),
                               ),
                             ],
                           )

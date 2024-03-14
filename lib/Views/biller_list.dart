@@ -1,16 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/biller_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
+import 'package:swiftfunds/Models/biller.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
 
-class BillerListScreen extends StatelessWidget {
+class BillerListScreen extends StatefulWidget {
   final String categoryName;
   final IconData icon;
-  const BillerListScreen({super.key, required this.categoryName, required this.icon});
+  final int categoryId; 
+  
+  const BillerListScreen({super.key, required this.categoryName, required this.icon, required this.categoryId});
+
+  @override
+  State<BillerListScreen> createState() => _BillerListScreenState();
+}
+
+class _BillerListScreenState extends State<BillerListScreen> {
+  late List<Biller> billers;
+  bool isLoaded = false;
+
+  final db = DatabaseService();
+
+  @override
+  void initState() {
+    super.initState();
+    loadBillers();
+  }
+
+  loadBillers() async {
+    billers = await db.getBillersByCategory(widget.categoryId);
+
+    setState(() {
+      isLoaded = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoaded) {
+      return BillerListWidget(widget: widget, billers: billers);
+    } else {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+  }
+}
+
+class BillerListWidget extends StatelessWidget {
+  const BillerListWidget({
+    super.key,
+    required this.widget,
+    required this.billers,
+  });
+
+  final BillerListScreen widget;
+  final List<Biller> billers;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Center(
@@ -54,18 +102,18 @@ class BillerListScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(categoryName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), 
+                              Text(widget.categoryName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), 
                               const SizedBox(height: 10),
-                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
-                              const BillerDivider(),
-                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
-                              const BillerDivider(),
-                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
-                              const BillerDivider(),
-                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
-                              const BillerDivider(),
-                              BillerWidget(icon: icon, billerName: "Capiz Electrical Cooperative",),
-                              const BillerDivider(),
+                              Column(
+                                children: billers.map((biller) {
+                                  return Column(
+                                    children: [
+                                      BillerWidget(logo: biller.logo, billerName: biller.name, categoryIcon: widget.icon,),
+                                      const BillerDivider(),
+                                    ],
+                                  );
+                                }).toList(),
+                              )
                             ]
                           )
                         )
@@ -79,7 +127,6 @@ class BillerListScreen extends StatelessWidget {
         )
       )
     );
-
   }
 }
 
