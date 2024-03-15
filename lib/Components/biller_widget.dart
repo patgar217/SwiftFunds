@@ -1,15 +1,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
+import 'package:swiftfunds/Models/biller.dart';
 import 'package:swiftfunds/Views/add_biller.dart';
 
 class BillerWidget extends StatelessWidget {
-  final String logo;
-  final String billerName;
+  final Biller biller;
   final IconData categoryIcon;
   
   const BillerWidget({
-    super.key, required this.logo, required this.billerName, required this.categoryIcon,
+    super.key, required this.biller, required this.categoryIcon,
   });
 
 
@@ -18,7 +18,7 @@ class BillerWidget extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap:() {
-        Navigator.of(context).push( MaterialPageRoute(builder: (context) => AddBillerScreen(billerName: billerName,)),);
+        Navigator.of(context).push( MaterialPageRoute(builder: (context) => AddBillerScreen(biller: biller, billerName: biller.name)),);
       },
       child: SizedBox(
         width: size.width * .90,
@@ -30,15 +30,15 @@ class BillerWidget extends StatelessWidget {
                 color: secondaryDark,
               ),
               padding: const EdgeInsets.all(5.0),
-              child: logo != "" ? CircleAvatar(
-                    backgroundImage: AssetImage(logo),
+              child: biller.logo != "" ? CircleAvatar(
+                    backgroundImage: AssetImage(biller.logo),
                     radius: 17,
                   ) : Icon(categoryIcon, size: 30, color: backgroundColor,),
             ),
             const SizedBox(width: 5,),
             SizedBox(
               width: (size.width * .90) - 100,
-              child: Text(billerName, style: const TextStyle(fontSize: 18, color: secondaryDark),overflow: TextOverflow.ellipsis)),
+              child: Text(biller.name, style: const TextStyle(fontSize: 18, color: secondaryDark),overflow: TextOverflow.ellipsis)),
             const Spacer(),
             const Icon(Icons.arrow_right, size: 40, color: secondaryDark,)
           ],

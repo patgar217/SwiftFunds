@@ -53,7 +53,7 @@ class CurrentBiller {
         "acctName": acctName,
         "acctNumber": acctNumber,
         "acctType": acctType,
-        "isRepeating": isRepeating,
+        "isRepeating": isRepeating ? 1 : 0,
         "frequency": frequency,
         "noOfPayments": noOfPayments,
         "logo":logo

@@ -11,6 +11,7 @@ class DatabaseService {
 
   final dbHelper = DatabaseHelper();
 
+  /// USER TABLE
   Future<bool> authenticate(User usr)async{
     final Database db = await dbHelper.initDB();
     var result = await db.rawQuery("select * from user where username = '${usr.username}' AND password = '${usr.password}' ");
@@ -55,6 +56,7 @@ class DatabaseService {
 
   }
 
+  /// CATEGORY TABLE
   Future<List<Category>> getCategories() async {
     final Database db = await dbHelper.initDB();
     final maps = await db.query(
@@ -63,6 +65,7 @@ class DatabaseService {
     return List.generate(maps.length, (i) => Category.fromMap(maps[i]));
   }
 
+  /// BILLER TABLE
   Future<List<Biller>> getBillersByCategory(int categoryId) async {
     final Database db = await dbHelper.initDB();
     final maps = await db.query(
@@ -71,6 +74,18 @@ class DatabaseService {
       whereArgs: [categoryId],
     );
     return List.generate(maps.length, (i) => Biller.fromMap(maps[i]));
+  }
+
+  Future<Biller> getBillerById(int id)async{
+    final Database db = await dbHelper.initDB();
+    var res = await db.query("biller",where: "id = ?", whereArgs: [id]);
+    return Biller.fromMap(res.first);
+  }
+
+  /// BILL TABLE
+  Future<int> createBill(Bill bill)async{
+    final Database db = await dbHelper.initDB();
+    return db.insert("bill", bill.toMap());
   }
 
   Future<List<Bill>> getBills(int userId) async {
@@ -118,6 +133,43 @@ class DatabaseService {
     return total;
   }
 
+  Future<List<Bill>> getBillsByCurrentBiller(int currentBillerId) async {
+    final Database db = await dbHelper.initDB();
+    final maps = await db.query(
+      "bill",
+      where: 'currentBillerId = ? ',
+    whereArgs: [currentBillerId, ],
+    );
+
+    return List.generate(maps.length, (i) => Bill.fromMap(maps[i]));
+  }
+
+  Future<int> updateBill(int id, String dueDate, double amount) async {
+    final Database db = await dbHelper.initDB();
+    
+    var res = db.update(
+      "bill",
+      {
+        "dueDate": dueDate,
+        "amount": amount
+      },
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    return res;
+  }
+
+  Future<int> deleteBill(int id) async {
+  final Database db = await dbHelper.initDB();
+  return db.delete(
+    "bill",
+    where: "id = ?",
+    whereArgs: [id],
+  );
+}
+
+  /// CURRENT BILLER TABLE
   Future<CurrentBiller> getCurrentBiller(int id)async{
     final Database db = await dbHelper.initDB();
     var res = await db.query("currentBiller",where: "id = ?", whereArgs: [id]);
@@ -134,6 +186,26 @@ class DatabaseService {
     return List.generate(maps.length, (i) => CurrentBiller.fromMap(maps[i]));
   }
 
+  Future<int> createCurrentBiller(CurrentBiller biller)async{
+    final Database db = await dbHelper.initDB();
+    return db.insert("currentBiller", biller.toMap());
+  }
+
+  Future<int> updateCurrentBiller(int id, CurrentBiller currentBiller) async {
+    final Database db = await dbHelper.initDB();
+    final updateMap = currentBiller.toMap(); // Get all fields from the updatedPayment object
+    updateMap.removeWhere((key, value) => key == 'id'); // Exclude the ID from the update
+    
+    var res = db.update(
+      "currentBiller",
+      updateMap,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+    return res;
+  }
+
+  /// PAYMENT TABLE
   Future<Payment> createPayment(Payment payment) async {
     final Database db = await dbHelper.initDB();
     final id = await db.insert("payment", payment.toMap());

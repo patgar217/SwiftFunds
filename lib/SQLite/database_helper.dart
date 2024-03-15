@@ -600,14 +600,14 @@ class DatabaseHelper{
       {
           "userId": 1,
           "currentBillerId": 1,
-          "dueDate":"2024-03-20",
+          "dueDate":"03-20-2024",
           "amount": 1000.00,
           "status": "PAID",
       },
       {
           "userId": 1,
           "currentBillerId": 1,
-          "dueDate":"2024-03-30",
+          "dueDate":"03-30-2024",
           "amount": 2500.00,
           "status": "PENDING",
       },
@@ -615,7 +615,7 @@ class DatabaseHelper{
           
           "userId": 1,
           "currentBillerId": 2,
-          "dueDate":"2024-03-28",
+          "dueDate":"03-28-2024",
           "amount": 500.00,
           "status": "PENDING",
       },
@@ -623,7 +623,7 @@ class DatabaseHelper{
           
           "userId": 1,
           "currentBillerId": 3,
-          "dueDate":"2024-03-29",
+          "dueDate":"03-29-2024",
           "amount": 1000.00,
           "status": "PENDING",
       },
@@ -642,7 +642,7 @@ class DatabaseHelper{
           "totalAmount": 1000.00,
           "pointsEarned": 0.10,
           "pointsRedeemed": 0.00,
-          "paymentDate": "2024-03-12 10:00 AM",
+          "paymentDate": "03-12-2024 10:00 AM",
           "status": "SUCCESS"
       };
 

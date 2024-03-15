@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Models/bill.dart';
+import 'package:swiftfunds/Models/biller.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
 import 'package:swiftfunds/Views/add_biller.dart';
 
 class BillWidget extends StatefulWidget {
@@ -22,24 +23,29 @@ class BillWidget extends StatefulWidget {
 
 class _BillWidgetState extends State<BillWidget> {
   late bool isBillPaid = widget.isChecked;
+  late Biller biller;
+  final db = DatabaseService();
+  
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  loadProfile() async {
+    biller = await db.getBillerById(widget.bill.currentBiller!.billerId);
+  }
   
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: (){
-        final now = DateTime.now();
-        final dueDate = now.add(Duration(days: widget.dueDays));
-
-        final formatter = DateFormat('MM/dd/yyyy');
-        final formattedDate = formatter.format(dueDate);
         Navigator.of(context).push( MaterialPageRoute(builder: (context) => AddBillerScreen(
-          billerName: widget.currNickname,
-          billName: widget.currNickname,
-          acctName: widget.currNickname,
-          acctNumber: widget.currId,
-          amount: widget.amount.toString(),
-          dueDate: formattedDate,
+          billerName: biller.name,
+          bill: widget.bill,
+          biller: biller,
+          currentBiller: widget.bill.currentBiller!,
         ), ),);
       },
       behavior: HitTestBehavior.opaque,

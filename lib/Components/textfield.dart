@@ -8,12 +8,13 @@ class InputField extends StatelessWidget {
   final TextEditingController controller;
   final double? height;
   final double? width;
+  final bool isEditable;
   
   const InputField({super.key,
     required this.hint,
     this.icon,
     required this.controller,
-    this.passwordInvisible = false, this.height, this.width});
+    this.passwordInvisible = false, this.height, this.width, required this.isEditable});
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +29,17 @@ class InputField extends StatelessWidget {
         color: primaryLightest,
         borderRadius: BorderRadius.circular(8),
         border: Border.all( // Add a border around all sides
-          color: primaryDark, // Set the desired border color
+          color: isEditable ? primaryDark : backgroundColor, // Set the desired border color
           width: 1, // Optional: Set the border width (default is 1.0)
         ),
       ),
 
       child: Center(
         child: TextFormField(
+          readOnly: !isEditable,
           obscureText: passwordInvisible,
           controller: controller,
+          style: isEditable ? const TextStyle() : const TextStyle(color: primaryDark, fontSize: 18, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: hint,

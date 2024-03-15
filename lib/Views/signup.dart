@@ -60,11 +60,11 @@ class _SignUpState extends State<SignUpScreen> {
                   padding: EdgeInsets.only(bottom: 40),
                   child: Text("Please fill the input below.", style: TextStyle(fontSize: 18, color: primaryDark)),
                 ),
-                InputField(hint: "Full Name", icon: Icons.person, controller: fullName),
-                InputField(hint: "Email", icon: Icons.email, controller: email),
-                InputField(hint: "Username", icon: Icons.account_circle, controller: usrName),
-                InputField(hint: "Password", icon: Icons.lock, controller: password, passwordInvisible: true,),
-                InputField(hint: "Re-enter password", icon: Icons.lock, controller: confirmPassword, passwordInvisible: true,),
+                InputField(hint: "Full Name", icon: Icons.person, controller: fullName, isEditable: true,),
+                InputField(hint: "Email", icon: Icons.email, controller: email, isEditable: true),
+                InputField(hint: "Username", icon: Icons.account_circle, controller: usrName, isEditable: true),
+                InputField(hint: "Password", icon: Icons.lock, controller: password, passwordInvisible: true, isEditable: true),
+                InputField(hint: "Re-enter password", icon: Icons.lock, controller: confirmPassword, passwordInvisible: true, isEditable: true),
                 isSignUpTrue ? Row(
                   children: [
                     Padding(

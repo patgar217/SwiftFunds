@@ -1,42 +1,210 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/textfield.dart';
+import 'package:swiftfunds/Models/bill.dart';
+import 'package:swiftfunds/Models/biller.dart';
+import 'package:swiftfunds/Models/current_biller.dart';
+import 'package:swiftfunds/SQLite/database_service.dart';
 import 'package:swiftfunds/Views/home.dart';
 
 class AddBillerScreen extends StatefulWidget {
+  final Biller? biller;
   final String billerName;
-  final String? amount;
-  final String? acctNumber;
-  final String? dueDate;
-  final String? acctName;
-  final String? billName;
-  const AddBillerScreen({super.key, required this.billerName, this.amount, this.acctNumber, this.dueDate, this.acctName, this.billName});
+  final Bill? bill;
+  final CurrentBiller? currentBiller;
+  const AddBillerScreen({super.key, this.biller, required this.billerName, this.bill, this.currentBiller});
 
   @override
   State<AddBillerScreen> createState() => _AddBillerScreenState();
 }
 
 class _AddBillerScreenState extends State<AddBillerScreen> {
-  late final amountController = TextEditingController(text: widget.amount ?? "");
-  late final dueDateController = TextEditingController(text: widget.dueDate ?? "");
-  late final acctNumberController = TextEditingController(text: widget.acctNumber ?? "");
-  late final acctNameController = TextEditingController(text: widget.acctName ?? "");
-  late final billNameController = TextEditingController(text: widget.billName ?? "");
-  late final noOfPaymentsController = TextEditingController();
+  late final amountController = TextEditingController(text: widget.bill != null  ? widget.bill!.amount.toString() :  "");
+  late final dueDateController = TextEditingController(text: widget.bill != null  ? widget.bill!.dueDate.toString() :  "");
+  late final acctNumberController = TextEditingController(text: widget.currentBiller != null  ? widget.currentBiller!.acctNumber :  "");
+  late final acctNameController = TextEditingController(text: widget.currentBiller != null  ? widget.currentBiller!.acctName :  "");
+  late final billNameController = TextEditingController(text: widget.currentBiller != null  ? widget.currentBiller!.nickname :  "");
+  late final noOfPaymentsController = TextEditingController(text: widget.currentBiller != null && widget.currentBiller!.isRepeating ? widget.currentBiller!.noOfPayments.toString() :  "");
+
+  bool isEditing = false;
+  bool canEditBiller = false;
 
   List<String> billFrequency = [
-    "Select",
-    "Weekly",
-    "Monthly",
-    "Quarterly"
+    "WEEKLY",
+    "MONTHLY",
+    "QUARTERLY"
   ];
-  late String selectedFrequency = billFrequency.first;
+  late String selectedFrequency = billFrequency[1];
+  late int loggedId;
+  final db = DatabaseService();
 
   bool isRepeat = false;
 
   @override
+  void initState() {
+    super.initState();
+    loadCategoriesAndBillers();
+  }
+
+  loadCategoriesAndBillers() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    loggedId = prefs.getInt("loggedId")!;
+
+    if(widget.bill == null) {
+      setState(() {
+        isEditing = true;
+      },);
+    } else {
+      setState(() {
+        isRepeat = widget.bill!.currentBiller!.isRepeating;
+      },);
+    }
+
+    if((widget.bill != null && widget.currentBiller != null) || (widget.bill == null && widget.currentBiller == null)){
+      setState(() {
+        canEditBiller = true;
+      });
+    }
+    if(widget.currentBiller != null && widget.currentBiller!.isRepeating && widget.currentBiller!.frequency != null) {
+      setState(() {
+        selectedFrequency = billFrequency.firstWhere((element) => element == widget.currentBiller!.frequency!);
+      });
+    }
+
+  }
+  void addBill() async {
+    int currentBillerId;
+    if(widget.biller != null){
+      CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, isRepeating: isRepeat, logo: widget.biller!.logo, frequency: isRepeat ? selectedFrequency : "", noOfPayments: noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0);
+      currentBillerId = await db.createCurrentBiller(currentBiller);
+    }else{
+      currentBillerId = widget.currentBiller!.id!;
+    }
+
+    Bill bill = Bill(currentBillerId: currentBillerId, userId: loggedId, dueDate: dueDateController.text, amount: double.parse(amountController.text), status: "PENDING");
+    var res = await db.createBill(bill);
+    if(res>0){
+      if(!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
+    }
+  }
+
+  Future<bool> checkCurrentBiller() async {
+    CurrentBiller currBiller = widget.currentBiller!;
+    List<Bill> bills = await db.getBillsByCurrentBiller(widget.currentBiller!.id!);
+
+    bool hasChanged = currBiller.acctName != acctNameController.text || currBiller.acctNumber != acctNumberController.text || currBiller.nickname != billNameController.text || currBiller.isRepeating != isRepeat;
+    if(!hasChanged && currBiller.isRepeating && isRepeat){
+      hasChanged = currBiller.frequency != selectedFrequency || currBiller.noOfPayments.toString() != noOfPaymentsController.text;
+    }
+
+    return bills.length > 1 || !hasChanged;
+  }
+
+  void editAction() async {
+    bool canEdit = await checkCurrentBiller();
+
+    if(canEdit){
+      editBill();
+    }else{
+      showEditAlert();
+    }
+  }
+
+  void showEditAlert(){
+    final yesButton = TextButton(
+      child: const Text("Yes", style: TextStyle(color: Colors.red, fontSize: 15),),
+      onPressed: () {
+        Navigator.pop(context);
+        editBill();
+      },
+    );
+
+    final noButton = TextButton(
+      child: const Text("No", style: TextStyle(color: Colors.grey, fontSize: 15),),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    final alert = AlertDialog(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      shadowColor: Colors.white,
+      title: const Text("Warning", style: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),),
+      content: const Text("Current Biller has other bills. Editing this would affect other bills. Would you like to procees?", style: TextStyle(fontSize: 15)),
+      actions: [
+        noButton,
+        yesButton
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => alert,
+    );
+
+  }
+
+  void editBill() async {
+    var res = await db.updateBill(widget.bill!.id!, dueDateController.text, double.parse(amountController.text));
+    CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, isRepeating: isRepeat, logo: widget.biller!.logo, frequency: isRepeat ? selectedFrequency : "", noOfPayments: noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0);
+    var res1 = await db.updateCurrentBiller(widget.currentBiller!.id!, currentBiller);
+
+    if(res>0 && res1>0){
+      if(!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
+    }
+  }
+
+  showDeleteAlert() {
+    final yesButton = TextButton(
+      child: const Text("Yes", style: TextStyle(color: Colors.red, fontSize: 15),),
+      onPressed: () {
+        Navigator.pop(context);
+        deleteBill();
+      },
+    );
+
+    final noButton = TextButton(
+      child: const Text("No", style: TextStyle(color: Colors.grey, fontSize: 15),),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    final alert = AlertDialog(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      shadowColor: Colors.white,
+      title: const Text("Warning", style: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),),
+      content: const Text("Are you sure you want to delete this bill?", style: TextStyle(fontSize: 15)),
+      actions: [
+        noButton,
+        yesButton
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => alert,
+    );
+  }
+
+  deleteBill() async {
+    var res = await db.deleteBill(widget.bill!.id!);
+    if(res>0){
+      if(!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -71,7 +239,6 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                         top: 70,
                         child: Container(
                           width: size.width * .95,
-                          height: isRepeat ? 650 : 600,
                           padding: const EdgeInsets.fromLTRB( 10, 5, 10, 10),
                           decoration: const BoxDecoration(
                             color: backgroundColor,
@@ -82,11 +249,53 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              isEditing ? 
                               Row(
                                 children: [
-                                  Text(widget.billerName, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: secondaryDark)),
+                                  SizedBox(
+                                    width: size.width * .80,
+                                    child: Text(widget.billerName, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: secondaryDark), overflow: TextOverflow.ellipsis,)
+                                  ),
                                   const Spacer(),
-                                  IconButton(onPressed: (){}, icon: const Icon(Icons.edit, size: 25, color: tertiaryDark))
+                                  SizedBox(
+                                    width: 10,
+                                    child: IconButton(
+                                      padding: const EdgeInsets.all(0), 
+                                      onPressed: (){}, 
+                                      icon: const Icon(Icons.save, size: 10, color: backgroundColor)
+                                    ),
+                                  )
+                                ],
+                              )
+                              :
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: size.width * .65,
+                                    child: Text(widget.billerName, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: secondaryDark), overflow: TextOverflow.ellipsis,)
+                                  ),
+                                  const Spacer(),
+                                  SizedBox(
+                                    width: 40,
+                                    child: IconButton(
+                                      onPressed: (){
+                                        setState(() {
+                                          isEditing = true;
+                                        });
+                                      }, 
+                                      icon: const Icon(Icons.edit, size: 25, color: tertiaryDark)
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 50,
+                                    child: IconButton(
+                                      padding: const EdgeInsets.all(0), 
+                                      onPressed: (){
+                                        showDeleteAlert();
+                                      }, 
+                                      icon: const Icon(Icons.delete, size: 25, color: quarternaryColor)
+                                    ),
+                                  )
                                 ],
                               ),
                               const Text("Bill Details", style: TextStyle(fontSize: 12, color: secondaryDark)),
@@ -97,13 +306,13 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                               ),
                               const SizedBox(height: 5,),
                               const Text("Amount", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "P0.00", icon: Icons.monetization_on, controller: amountController, height: 50,),
+                              InputField(hint: "P0.00", icon: Icons.monetization_on, controller: amountController, height: 50, isEditable: isEditing),
 
-                              const Spacer(),
+                              const SizedBox(height: 5,),
                               const Text("Due Date", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "MM/DD/YYYY", icon: Icons.calendar_month, controller: dueDateController, height: 50),
+                              InputField(hint: "MM-DD-YYYY", icon: Icons.calendar_month, controller: dueDateController, height: 50, isEditable: isEditing),
 
-                              const SizedBox(height: 10,),
+                              const SizedBox(height: 15,),
                               const Text("Biller Details", style: TextStyle(fontSize: 12, color: secondaryDark)),
                               const Divider(
                                 color: secondaryColor, 
@@ -112,15 +321,15 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                               ),
                               const SizedBox(height: 5,),
                               const Text("Bill Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "Name of bill", icon: Icons.badge, controller: billNameController, height: 50),
+                              InputField(hint: "Name of bill", icon: Icons.badge, controller: billNameController, height: 50, isEditable: isEditing && canEditBiller),
 
-                              const Spacer(),
+                              const SizedBox(height: 5,),
                               const Text("Account Number", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "12 digit account number", icon: Icons.account_balance_wallet, controller: acctNumberController, height: 50),
+                              InputField(hint: "12 digit account number", icon: Icons.account_balance_wallet, controller: acctNumberController, height: 50, isEditable: isEditing && canEditBiller),
 
-                              const Spacer(),
+                              const SizedBox(height: 5,),
                               const Text("Account Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                              InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctNameController, height: 50),
+                              InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctNameController, height: 50, isEditable: isEditing && canEditBiller),
 
                               const SizedBox(height: 10,),
                               Row(
@@ -133,7 +342,9 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                       value: isRepeat,
                                       onChanged: (value){
                                         setState(() {
-                                          isRepeat = !isRepeat;
+                                          if(isEditing && canEditBiller){
+                                            isRepeat = !isRepeat;
+                                          }
                                         });
                                       },
                                     ),
@@ -157,26 +368,29 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                           borderRadius: BorderRadius.circular(8),
                                           color: primaryLightest,
                                           border: Border.all( // Add a border around all sides
-                                            color: primaryDark, // Set the desired border color
+                                            color: isEditing && canEditBiller ? primaryDark : backgroundColor, // Set the desired border color
                                             width: 1, // Optional: Set the border width (default is 1.0)
                                           ),
                                         ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                            value: selectedFrequency,
-                                            onChanged: (String? newValue) {
-                                              setState(() {
-                                                selectedFrequency = newValue?? "Select";
-                                              });
-                                            },
-                                            items: billFrequency.map((String kv) {
-                                              return DropdownMenuItem<String>(
-                                                value: kv,
-                                                child: Text(kv, style: TextStyle(fontSize: 15, color: kv == "Select" ? primaryColor : Colors.black)),
-                                              );
-                                            }).toList(),
-                                            isExpanded: true,
-                                          )
+                                        child: IgnorePointer(
+                                          ignoring: !(isEditing && canEditBiller) ,
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              value: selectedFrequency,
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  selectedFrequency = newValue?? "MONTHLY";
+                                                });
+                                              },
+                                              items: billFrequency.map((String kv) {
+                                                return DropdownMenuItem<String>(
+                                                  value: kv,
+                                                  child: Text(kv, style: (isEditing && canEditBiller) ? const TextStyle(fontSize: 15, color: Colors.black) : const TextStyle(color: primaryDark, fontSize: 18, fontWeight: FontWeight.w600)),
+                                                );
+                                              }).toList(),
+                                              isExpanded: true,
+                                            )
+                                          ),
                                         )
                                       ),
                                     ],
@@ -186,28 +400,38 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       const Text("No. of Payments", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                      InputField(hint: "10", controller: noOfPaymentsController, height: 50, width: (size.width * .85)/2 ),
+                                      InputField(hint: "10", controller: noOfPaymentsController, height: 50, width: (size.width * .85)/2 , isEditable: isEditing && canEditBiller),
                                     ],
-                                  )
+                                  ),
                                 ],
-                              ) : const SizedBox()
+                              ) : const SizedBox(),
+                              isEditing ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Button(label: "CANCEL", press: (){
+                                    if(widget.bill != null){
+                                      setState(() {
+                                        isEditing = false;
+                                      });
+                                    }else{
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
+                                    }
+                                  }, backgroundColor: secondaryColor, textSize: 15, isRounded: true, widthRatio: .2, marginTop: 10),
+                                  const SizedBox(width: 5,),
+                                  Button(label: "SAVE", press: (){
+                                    if(widget.bill != null){
+                                      editAction();
+                                    }else{
+                                      addBill();
+                                    }
+                                  }, backgroundColor: secondaryDark, textSize: 15, isRounded: true, widthRatio: .2, marginTop: 10,),
+                                ],
+                              ) : const SizedBox(),
                             ]
                           )
                         )
                       ),
-                      Positioned(
-                        bottom: 10,
-                        child: Column(
-                          children: [
-                            Button(label: "SAVE", press: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
-                            }, backgroundColor: secondaryDark, textSize: 18, isRounded: true, widthRatio: .95, marginTop: 10,),
-                            Button(label: "CANCEL", press: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
-                            }, backgroundColor: secondaryColor, textSize: 18, isRounded: true, widthRatio: .95, marginTop: 10),
-                          ],
-                        ),
-                      )
                     ]
                   )
                 )

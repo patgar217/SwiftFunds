@@ -108,7 +108,7 @@ class BillerListWidget extends StatelessWidget {
                                 children: billers.map((biller) {
                                   return Column(
                                     children: [
-                                      BillerWidget(logo: biller.logo, billerName: biller.name, categoryIcon: widget.icon,),
+                                      BillerWidget(biller: biller, categoryIcon: widget.icon,),
                                       const BillerDivider(),
                                     ],
                                   );

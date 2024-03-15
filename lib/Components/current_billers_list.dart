@@ -47,7 +47,7 @@ class _CurrentBillersListState extends State<CurrentBillersList> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: widget.currentBillers.map((biller) {
-                return CurrentBillerWidget(image: biller.logo, billerName: biller.nickname);
+                return CurrentBillerWidget(biller: biller);
               }).toList(),
             ),
           )

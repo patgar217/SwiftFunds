@@ -25,9 +25,9 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
     updatePayment();
   }
 
-  void updatePayment()async{
+  void updatePayment() async{
     DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('yyyy/MM/dd HH:mm a');
+    DateFormat formatter = DateFormat('MM-dd-yyyy HH:mm a');
     String formattedDateTime = formatter.format(now);
 
     Payment payment = widget.payment;

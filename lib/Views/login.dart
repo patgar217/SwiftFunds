@@ -63,8 +63,8 @@ class _LoginState extends State<LoginScreen> {
                   padding: EdgeInsets.only(bottom: 40),
                   child: Text("Please sign in to continue", style: TextStyle(fontSize: 18, color: primaryDark)),
                 ),
-                InputField(hint: "Username", icon: Icons.account_circle, controller: usrNameController),
-                InputField(hint: "Password", icon: Icons.lock, controller: passwordController, passwordInvisible: true,),
+                InputField(hint: "Username", icon: Icons.account_circle, controller: usrNameController, isEditable: true),
+                InputField(hint: "Password", icon: Icons.lock, controller: passwordController, passwordInvisible: true, isEditable: true),
 
                 isLoginTrue ? Row(
                   children: [

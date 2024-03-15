@@ -65,7 +65,7 @@ class HomeWidget extends StatefulWidget {
   final List<Bill> pendingBills;
 
   int getDaysUntilDate(String dateString) {
-    final formattedDate = DateFormat('yyyy-MM-dd').parse(dateString);
+    final formattedDate = DateFormat('MM-dd-yyyy').parse(dateString);
 
     final now = DateTime.now();
 
