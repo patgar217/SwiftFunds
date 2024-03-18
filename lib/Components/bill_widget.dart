@@ -101,10 +101,10 @@ class _BillWidgetState extends State<BillWidget> {
                         ),
                         TextSpan(
                           text: widget.dueDays.toString(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold, color: widget.dueDays < 5 ? Colors.red : Colors.black),
                         ),
-                        const TextSpan(
-                          text: " days",
+                        TextSpan(
+                          text: widget.dueDays <=1 ? " day" : " days",
                         ),
                       ],
                     ),

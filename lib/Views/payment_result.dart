@@ -70,10 +70,10 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                         height: size.height * .55,
                       ),
                        Positioned(
-                        top: 30,
+                        top: 20,
                         child: Container(
                           width: size.width * .90,
-                          height: size.height * .80,
+                          height: size.height * .85,
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: const BoxDecoration(
                             color: backgroundColor,
@@ -87,7 +87,7 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
-                                  width: 200,
+                                  width: 120,
                                   decoration:  BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: backgroundColor,
@@ -97,10 +97,10 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                                     ),
                                   ),
                                   alignment: Alignment.center,
-                                  margin: const EdgeInsets.only(top: 50),
+                                  margin: const EdgeInsets.only(top: 20),
                                   child: Icon(
                                     (widget.isSuccess ? Icons.check_circle : Icons.cancel), 
-                                    size: 180, 
+                                    size: 100, 
                                     color: (widget.isSuccess ? primaryDark : quarternaryDark),
                                   )
                                 ),
@@ -123,7 +123,7 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 20,),
+                                const SizedBox(height: 10,),
                                 Column(
                                   children: widget.payment.bills.map((bill) {
                                     return PaidBill(billerId: bill.currentBiller!.acctNumber.toString(), billerName: bill.currentBiller!.nickname, amount: bill.amount, isPaid: widget.isSuccess,);
@@ -166,7 +166,7 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                         )
                       ),
                       Positioned(
-                        bottom: 30,
+                        bottom: 20,
                         child: Button(label: "DONE", press: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
                         }, backgroundColor: (widget.isSuccess ? secondaryDark : quarternaryDark), textSize: 18, isRounded: true,),

@@ -41,6 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
     prefs.setInt("loggedId", profile.userId!);
 
     pendingBills = await db.getBillsByUserIdAndStatus(profile.userId!, "PENDING");
+
+    pendingBills.sort((a, b) {
+      final dateFormatter = DateFormat('MM-dd-yyyy');
+      final dateA = dateFormatter.parse(a.dueDate);
+      final dateB = dateFormatter.parse(b.dueDate);
+      return dateA.compareTo(dateB);
+    });
     setState(() {
       isProfileLoaded = true;
     });
@@ -161,25 +168,43 @@ class _HomeWidgetState extends State<HomeWidget> {
                       top: 80,
                       child: MyBills(profile: widget.profile, totalBills: widget.getTotalBill(),),
                     ),
-                    Positioned(
+                    if (widget.pendingBills.isNotEmpty) Positioned(
                       top: 250,
-                      child: Column(
-                        children: widget.pendingBills.map((bill) {
-                          final currentBiller = bill.currentBiller;
-                          if(currentBiller != null){
-                          return BillWidget(
-                              currNickname: currentBiller.nickname,
-                              currId: currentBiller.acctNumber,
-                              isChecked: false,
-                              dueDays: widget.getDaysUntilDate(bill.dueDate),
-                              amount: bill.amount,
-                              image: currentBiller.logo,
-                              triggerCheck: triggerCheck,
-                              bill: bill
-                            );}
-                            return Text(bill.currentBillerId.toString());
-                        }).toList(),
+                      height: size.height - 360,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: widget.pendingBills.map((bill) {
+                            final currentBiller = bill.currentBiller;
+                            if(currentBiller != null){
+                            return BillWidget(
+                                currNickname: currentBiller.nickname,
+                                currId: currentBiller.acctNumber,
+                                isChecked: false,
+                                dueDays: widget.getDaysUntilDate(bill.dueDate),
+                                amount: bill.amount,
+                                image: currentBiller.logo,
+                                triggerCheck: triggerCheck,
+                                bill: bill
+                              );}
+                              return Text(bill.currentBillerId.toString());
+                          }).toList(),
+                        ),
                       )
+                    ) else Positioned( 
+                      top: 250,
+                      height: size.height - 360,
+                       child: Center(
+                         child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                           children: [
+                             const Icon(Icons.fact_check_outlined, size: 150, color: primaryLight),
+                             SizedBox(
+                              width: size.width *.70, 
+                              child: const Text("You don't have any pending bills",textAlign: TextAlign.center, style: TextStyle(fontSize: 25, color: primaryLight), overflow: TextOverflow.clip,)),
+                           ],
+                         ),
+                       )
                     ),
                     Positioned(
                       bottom: 0,

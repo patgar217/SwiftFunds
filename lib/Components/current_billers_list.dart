@@ -41,14 +41,17 @@ class _CurrentBillersListState extends State<CurrentBillersList> {
         children: [
           const Text("Current Billers",style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 5,),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: widget.currentBillers.map((biller) {
-                return CurrentBillerWidget(biller: biller);
-              }).toList(),
+          SizedBox(
+            width: size.width * .90,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: widget.currentBillers.map((biller) {
+                  return CurrentBillerWidget(biller: biller);
+                }).toList(),
+              ),
             ),
           )
         ],

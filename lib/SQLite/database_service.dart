@@ -103,7 +103,6 @@ class DatabaseService {
     }
 
     return bills;
-
   }
 
   Future<List<Bill>> getBillsByUserIdAndStatus(int userId, String status) async {
@@ -111,7 +110,7 @@ class DatabaseService {
     final maps = await db.query(
       "bill",
       where: 'userId = ? AND status = ?',
-    whereArgs: [userId, status],
+      whereArgs: [userId, status],
     );
     
     List<Bill> bills = List.generate(maps.length, (i) => Bill.fromMap(maps[i]));
@@ -162,8 +161,11 @@ class DatabaseService {
 
   Future<int> deleteBill(int id) async {
   final Database db = await dbHelper.initDB();
-  return db.delete(
+  return  db.update(
     "bill",
+    {
+      "status": "INACTIVE",
+    },
     where: "id = ?",
     whereArgs: [id],
   );
@@ -251,6 +253,37 @@ class DatabaseService {
 
     return res;
   }
+
+  Future<List<Payment>> getPayments(int userId) async {
+    final Database db = await dbHelper.initDB();
+    final maps = await db.query(
+      "payment",
+      where: 'userId = ?',
+      whereArgs: [userId],
+      orderBy: "id DESC",
+    );
+    List<Payment> payments = List.generate(maps.length, (i) => Payment.fromMap(maps[i]));
+    List<Bill> userBills = await getBills(userId);
+    
+    for(final payment in payments){
+      List<int> billIds = await getBillIdsByPaymentId(payment.id!);
+      List<Bill> bills = userBills.where((bill) => billIds.contains(bill.id)).toList();
+      payment.bills = bills;
+    }
+
+    return payments;
+  }
+
+  Future<List<int>> getBillIdsByPaymentId(int paymentId) async {
+  final Database db = await dbHelper.initDB();
+  final List<Map<String, dynamic>> maps = await db.query(
+    'paymentBill',
+    where: 'paymentId = ?',
+    whereArgs: [paymentId],
+  );
+
+  return maps.map((map) => map['billId'] as int).toList();
+}
 
 
 }

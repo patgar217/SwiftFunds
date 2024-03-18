@@ -26,7 +26,7 @@ class PaidBill extends StatelessWidget {
           ]
         ),
         const Spacer(),
-        Text("P$amount", style: const TextStyle(color: Colors.black, fontSize: 27, fontWeight: FontWeight.bold, height: 1)),
+        Text("₱${amount.toStringAsFixed(2)}", style: const TextStyle(color: Colors.black, fontSize: 27, fontWeight: FontWeight.bold, height: 1)),
       ],
     );
   }

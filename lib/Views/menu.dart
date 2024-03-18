@@ -4,6 +4,7 @@ import 'package:swiftfunds/SQLite/database_helper.dart';
 import 'package:swiftfunds/Views/about.dart';
 import 'package:swiftfunds/Views/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swiftfunds/Views/transaction_history.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -46,7 +47,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       trailing: const Icon(Icons.arrow_right,size: 30),
                       title: const Text("Transaction History", style: TextStyle(fontSize: 18)),
                       onTap: (){
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const AboutScreen()));
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const TransactionHistoryScreen()));
                       }
                     ),
                     const Divider(

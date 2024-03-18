@@ -92,12 +92,12 @@ class CategoriesScreenWidget extends StatelessWidget {
                         left: size.width * .05,
                         child: const Text("Add Bill",style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
                       ),
-                      Positioned(
+                      if (currentBillers.isNotEmpty) Positioned(
                         top: 70,
                         child: CurrentBillersList(currentBillers: currentBillers)
                       ),
                       Positioned(
-                        top:205,
+                        top: currentBillers.isNotEmpty ? 205 : 70,
                         child: Container(
                           width: size.width * .95,
                           height: 405,
