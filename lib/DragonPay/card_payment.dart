@@ -96,7 +96,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                 const SizedBox(height: 3,),
                 Center(
                   child: Text(
-                    "PHP ${widget.payment.totalAmount.toStringAsFixed(2)}",
+                    "PHP ${widget.payment.totalAmountWithPoints.toStringAsFixed(2)}",
                     style: const TextStyle(fontSize: 50, fontWeight: FontWeight.w300, color: Color(0xFF4573FF), fontFamily: "OpenSans"),
                   )
                 ),

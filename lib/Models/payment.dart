@@ -15,6 +15,7 @@ class Payment {
     String paymentDate;
     String status;
     List<Bill> bills;
+    double totalAmountWithPoints;
 
     Payment({
         this.id,
@@ -24,7 +25,8 @@ class Payment {
         required this.pointsRedeemed,
         required this.paymentDate,
         required this.status,
-        required this.bills
+        required this.bills,
+        required this.totalAmountWithPoints
     });
 
     factory Payment.fromMap(Map<String, dynamic> json) => Payment(
@@ -35,7 +37,8 @@ class Payment {
         pointsRedeemed: json["pointsRedeemed"].toDouble(),
         paymentDate: json["paymentDate"],
         status: json["status"],
-        bills: []
+        bills: [],
+        totalAmountWithPoints: json["totalAmountWithPoints"].toDouble()
     );
 
     Map<String, dynamic> toMap() => {
@@ -45,6 +48,7 @@ class Payment {
         "pointsEarned": pointsEarned,
         "pointsRedeemed": pointsRedeemed,
         "paymentDate": paymentDate,
-        "status": status
+        "status": status,
+        "totalAmountWithPoints": totalAmountWithPoints
     };
 }

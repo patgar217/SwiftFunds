@@ -18,6 +18,7 @@ class PaymentResultScreen extends StatefulWidget {
 
 class _PaymentResultScreenState extends State<PaymentResultScreen> {
   final db = DatabaseService();
+  double pointsToBeRedeemed = 0.00;
   
   @override
   void initState() {
@@ -26,6 +27,10 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
   }
 
   void updatePayment() async{
+    setState(() {
+      pointsToBeRedeemed = widget.payment.pointsRedeemed;
+    });
+
     DateTime now = DateTime.now();
     DateFormat formatter = DateFormat('MM-dd-yyyy HH:mm a');
     String formattedDateTime = formatter.format(now);
@@ -73,7 +78,7 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                         top: 20,
                         child: Container(
                           width: size.width * .90,
-                          height: size.height * .85,
+                          height: size.height * .83,
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: const BoxDecoration(
                             color: backgroundColor,
@@ -129,37 +134,30 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
                                     return PaidBill(billerId: bill.currentBiller!.acctNumber.toString(), billerName: bill.currentBiller!.nickname, amount: bill.amount, isPaid: widget.isSuccess,);
                                   }).toList(),
                                 ),
+                                const SizedBox(height: 10,),
+                                if(pointsToBeRedeemed > 0) Row(
+                                  children: [
+                                    Icon( Icons.monetization_on , color: widget.isSuccess ? primaryDark : quarternaryDark, size: 40),
+                                    const SizedBox(width: 10,),
+                                    const Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("SwiftPoints", style: TextStyle(fontSize: 15),),
+                                        Text("Redeemed", style: TextStyle(fontSize: 15),),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    Text('-₱${pointsToBeRedeemed.toStringAsFixed(2)}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                                  ],
+                                ),
                                 const Spacer(),
                                 const Text("Total Amount", style: TextStyle(fontSize: 18),),
-                                Text("₱${widget.payment.totalAmount.toStringAsFixed(2)}",style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
-                                widget.isSuccess ? Column(
-                                  children: [
-                                    const SizedBox(height: 20,),
-                                    RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(color: Colors.black, fontSize: 12),
-                                        children: [
-                                          const TextSpan(text: 'Points Earned: '),
-                                          TextSpan(
-                                            text: widget.payment.pointsEarned.toStringAsFixed(2)
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(color: Colors.black, fontSize: 12),
-                                        children: [
-                                          const TextSpan(text: 'Points Redeemed: '),
-                                          TextSpan(
-                                            text: widget.payment.pointsRedeemed.toStringAsFixed(2)
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 50,)
-                                  ],
-                                ) : const SizedBox(height: 50,),
+                                Text("₱${widget.payment.totalAmountWithPoints.toStringAsFixed(2)}",style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
+                                if(widget.isSuccess) Padding(
+                                  padding: const EdgeInsets.only(top: 20.0),
+                                  child: Text("SwiftPoints Earned: ${widget.payment.pointsEarned.toStringAsFixed(2)}", style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),),
+                                ),
+                                const SizedBox(height: 30,),
                               ]
                             ),
                           )

@@ -28,6 +28,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
   Widget build(BuildContext context) {
 
     bool isSuccess = widget.payment.status == "SUCCESS";
+    double pointsRedeemed = widget.payment.totalAmount - widget.payment.totalAmountWithPoints;
     Size size = MediaQuery.of(context).size;
 
     return Container(
@@ -71,11 +72,11 @@ class _PaymentWidgetState extends State<PaymentWidget> {
             }).toList(),
           ),
           const SizedBox(height: 5),
-          if(widget.payment.pointsRedeemed > 0) Row(
+          if(pointsRedeemed > 0) Row(
             children: [
-              Text("Redeemed ${widget.payment.pointsRedeemed} SwiftPoints", style: const TextStyle(fontSize: 15, color: Colors.grey)),
+              Text("Redeemed ${pointsRedeemed.toStringAsFixed(2)} SwiftPoints", style: const TextStyle(fontSize: 15, color: Colors.grey)),
               const Spacer(),
-              Text("-₱${widget.payment.pointsRedeemed.toStringAsFixed(2)}", style: const TextStyle(fontSize: 15, color: Colors.grey))
+              Text("-₱${pointsRedeemed.toStringAsFixed(2)}", style: const TextStyle(fontSize: 15, color: Colors.grey))
             ],
           ),
           const Divider(color: secondaryLightest, thickness: 1, height: 5,),
@@ -84,7 +85,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
             children: [
               const Text("Order Total", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const Spacer(),
-              Text("₱${widget.payment.totalAmount.toStringAsFixed(2)}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
+              Text("₱${widget.payment.totalAmountWithPoints.toStringAsFixed(2)}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
             ],
           ),
           Row(

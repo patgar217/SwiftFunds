@@ -49,7 +49,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
-                      text: widget.payment.totalAmount.toStringAsFixed(2),
+                      text: widget.payment.totalAmountWithPoints.toStringAsFixed(2),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(

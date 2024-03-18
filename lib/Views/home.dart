@@ -100,17 +100,33 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   List<Bill> checkedBills = [];
   double checkedTotal = 0.00;
+  double redeemLimit = 0.00;
+  double canRedeemAmount = 0.00;
+  double totalWithPoints = 0.00;
 
   void triggerCheck(bool isChecked, Bill bill ){
     if(isChecked){
       setState(() {
         checkedBills.add(bill);
         checkedTotal += bill.amount;
+        redeemLimit = checkedTotal * 0.01;
       });
     }else{
       setState(() {
         checkedBills.remove(bill);
         checkedTotal -= bill.amount;
+        redeemLimit = checkedTotal * 0.01;
+      });
+    }
+
+    redeemPoints();
+  }
+
+  void redeemPoints(){
+    if(widget.profile!.swiftpoints! >= 1){
+      setState(() {
+        canRedeemAmount = redeemLimit < widget.profile!.swiftpoints! ? redeemLimit : widget.profile!.swiftpoints!;
+        totalWithPoints = isRedeem ? checkedTotal - canRedeemAmount : checkedTotal;
       });
     }
   }
@@ -121,10 +137,11 @@ class _HomeWidgetState extends State<HomeWidget> {
       userId: widget.profile!.userId!, 
       totalAmount: checkedTotal,
       pointsEarned: 0.00,
-      pointsRedeemed: 0.00,
+      pointsRedeemed: isRedeem ? canRedeemAmount : 0.00,
       paymentDate: "",
       status: "PENDING",
-      bills: checkedBills
+      bills: checkedBills,
+      totalAmountWithPoints: totalWithPoints
     );
 
     Payment result = await db.createPayment(initialPayment);
@@ -218,13 +235,16 @@ class _HomeWidgetState extends State<HomeWidget> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const SizedBox(width: 15,),
-                                const Text("Redeem 0 SwiftPoints", style: TextStyle(fontSize: 15),),
+                                Text("Redeem ${canRedeemAmount.toStringAsFixed(2)} SwiftPoints", style: const TextStyle(fontSize: 15),),
                                 const Spacer(),
                                 Transform.scale(
                                   scale: 0.7,
                                   child: CupertinoSwitch(
                                     value: isRedeem,
-                                    onChanged: (value) { setState(() => isRedeem = value);},
+                                    onChanged: (value) { 
+                                      setState(() => isRedeem = value);
+                                      redeemPoints();
+                                    },
                                     activeColor: secondaryDark,
                                     trackColor: const Color.fromARGB(255, 214, 214, 214),
                                   ),
@@ -244,7 +264,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                         style: TextStyle(color: primaryDark, fontSize: 18),
                                       ),
                                       TextSpan(
-                                        text: "₱${checkedTotal.toStringAsFixed(2)}",
+                                        text: "₱${totalWithPoints.toStringAsFixed(2)}",
                                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: secondaryDark),
                                       ),
                                     ],

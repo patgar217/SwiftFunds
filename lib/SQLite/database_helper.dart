@@ -67,7 +67,8 @@ class DatabaseHelper{
    pointsEarned REAL,
    pointsRedeemed REAL,
    paymentDate TEXT,
-   status TEXT
+   status TEXT,
+   totalAmountWithPoints REAL
    )
    ''';
 
@@ -107,7 +108,7 @@ class DatabaseHelper{
       "email": "admin@swiftfunds.com",
       "username": "admin",
       "password": "admin",
-      "swiftpoints": 0.10,
+      "swiftpoints": 100.00,
     };
 
     try {
@@ -643,7 +644,8 @@ class DatabaseHelper{
           "pointsEarned": 0.10,
           "pointsRedeemed": 0.00,
           "paymentDate": "03-12-2024 10:00 AM",
-          "status": "SUCCESS"
+          "status": "SUCCESS",
+          "totalAmountWithPoints": 1000.00
       };
 
     try {

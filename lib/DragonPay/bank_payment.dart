@@ -54,7 +54,7 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                       text: "MYLJKWWB98", style: TextStyle(color: Color(0xFF003399))
                     ),
                     const TextSpan(text: ' : PHP'),
-                    TextSpan(text: widget.payment.totalAmount.toStringAsFixed(2)),
+                    TextSpan(text: widget.payment.totalAmountWithPoints.toStringAsFixed(2)),
                     const TextSpan(text: ' for Dragonpay payment.'),
                   ],
                 ),
