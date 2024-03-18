@@ -143,14 +143,16 @@ class DatabaseService {
     return List.generate(maps.length, (i) => Bill.fromMap(maps[i]));
   }
 
-  Future<int> updateBill(int id, String dueDate, double amount) async {
+  Future<int> updateBill(int id, String dueDate, double amount, bool isRepeating, String frequency, int noOfPayments) async {
     final Database db = await dbHelper.initDB();
-    
     var res = db.update(
       "bill",
       {
         "dueDate": dueDate,
-        "amount": amount
+        "amount": amount,
+        "isRepeating": isRepeating ? 1 : 0,
+        "frequency": frequency,
+        "noOfPayments": noOfPayments,
       },
       where: "id = ?",
       whereArgs: [id],
@@ -243,6 +245,7 @@ class DatabaseService {
           "bill",
           {
             "status": "PAID",
+            "noOfPaidPayments" : bill.noOfPaidPayments! + 1,
           },
           where: "id = ?",
           whereArgs: [bill.id],

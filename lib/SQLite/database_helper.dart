@@ -40,10 +40,6 @@ class DatabaseHelper{
    nickname TEXT,
    acctName TEXT,
    acctNumber TEXT,
-   acctType TEXT,
-   isRepeating BOOLEAN,
-   frequency TEXT,
-   noOfPayments INTEGER,
    logo TEXT
    )
    ''';
@@ -55,7 +51,11 @@ class DatabaseHelper{
    currentBillerId INTEGER REFERENCES currentBiller(id),
    dueDate TEXT,
    amount REAL,
-   status TEXT
+   status TEXT,
+   isRepeating BOOLEAN,
+   frequency TEXT,
+   noOfPayments INTEGER,
+   noOfPaidPayments INTEGER
    )
    ''';
 
@@ -108,7 +108,7 @@ class DatabaseHelper{
       "email": "admin@swiftfunds.com",
       "username": "admin",
       "password": "admin",
-      "swiftpoints": 100.00,
+      "swiftpoints": 0.10,
     };
 
     try {
@@ -555,11 +555,7 @@ class DatabaseHelper{
           "nickname":"CAPELCO",
           "acctName": "Juan Dela Cruz",
           "acctNumber": "123456789",
-          "acctType":null,
-          "isRepeating": 0,
-          "frequency": null,
-          "noOfPayments": null,
-          "logo": "assets/electricalUtilities/capelco.jpeg"
+          "logo": "assets/electricalUtilities/capelco.jpeg",
       },
       {
           
@@ -568,10 +564,6 @@ class DatabaseHelper{
           "nickname":"Water",
           "acctName": "Juan Dela Cruz",
           "acctNumber": "000111222",
-          "acctType": null,
-          "isRepeating": 0,
-          "frequency": null,
-          "noOfPayments": null,
           "logo": "assets/waterUtilities/roxas.png",
       },
       {
@@ -581,10 +573,6 @@ class DatabaseHelper{
           "nickname":"Internet",
           "acctName": "Juan Dela Cruz",
           "acctNumber": "444555666",
-          "acctType": "ACCOUNT_NO",
-          "isRepeating": 0,
-          "frequency": "MONTHLY",
-          "noOfPayments": 3,
           "logo": "assets/internet/globe.png",
       }
     ];
@@ -604,6 +592,10 @@ class DatabaseHelper{
           "dueDate":"03-20-2024",
           "amount": 1000.00,
           "status": "PAID",
+          "isRepeating": 0,
+          "frequency": null,
+          "noOfPayments": null,
+          "noOfPaidPayments": 1
       },
       {
           "userId": 1,
@@ -611,6 +603,10 @@ class DatabaseHelper{
           "dueDate":"03-30-2024",
           "amount": 2500.00,
           "status": "PENDING",
+          "isRepeating": 0,
+          "frequency": null,
+          "noOfPayments": null,
+          "noOfPaidPayments": 0
       },
       {
           
@@ -619,6 +615,10 @@ class DatabaseHelper{
           "dueDate":"03-28-2024",
           "amount": 500.00,
           "status": "PENDING",
+          "isRepeating": 0,
+          "frequency": null,
+          "noOfPayments": null,
+          "noOfPaidPayments": 0
       },
       {
           
@@ -627,6 +627,10 @@ class DatabaseHelper{
           "dueDate":"03-29-2024",
           "amount": 1000.00,
           "status": "PENDING",
+          "isRepeating": 1,
+          "frequency": "MONTHLY",
+          "noOfPayments": 3,
+          "noOfPaidPayments": 0
       },
     ];
 

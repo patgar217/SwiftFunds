@@ -11,10 +11,6 @@ class CurrentBiller {
     String nickname;
     String acctName;
     String acctNumber;
-    String? acctType;
-    bool isRepeating;
-    String? frequency;
-    int? noOfPayments;
     String logo;
 
     CurrentBiller({
@@ -24,11 +20,7 @@ class CurrentBiller {
         required this.nickname,
         required this.acctName,
         required this.acctNumber,
-        this.acctType,
-        required this.isRepeating,
-        this.frequency,
-        this.noOfPayments,
-        required this.logo
+        required this.logo,
     });
 
     factory CurrentBiller.fromMap(Map<String, dynamic> json) => CurrentBiller(
@@ -38,10 +30,6 @@ class CurrentBiller {
         nickname: json["nickname"],
         acctName: json["acctName"],
         acctNumber: json["acctNumber"],
-        acctType: json["acctType"],
-        isRepeating: json["isRepeating"] == 0 ? false : true,
-        frequency: json["frequency"],
-        noOfPayments: json["noOfPayments"],
         logo: json["logo"] ?? "",
     );
 
@@ -52,10 +40,6 @@ class CurrentBiller {
         "nickname": nickname,
         "acctName": acctName,
         "acctNumber": acctNumber,
-        "acctType": acctType,
-        "isRepeating": isRepeating ? 1 : 0,
-        "frequency": frequency,
-        "noOfPayments": noOfPayments,
-        "logo":logo
+        "logo":logo,
     };
 }

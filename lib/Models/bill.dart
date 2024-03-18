@@ -14,6 +14,10 @@ class Bill {
     double amount;
     String status;
     CurrentBiller? currentBiller;
+    bool isRepeating;
+    String? frequency;
+    int? noOfPayments;
+    int? noOfPaidPayments;
 
     Bill({
         this.id,
@@ -22,7 +26,11 @@ class Bill {
         required this.dueDate,
         required this.amount,
         required this.status,
-        this.currentBiller
+        this.currentBiller,
+        required this.isRepeating,
+        this.frequency,
+        this.noOfPayments,
+        this.noOfPaidPayments,
     });
 
     factory Bill.fromMap(Map<String, dynamic> json) => Bill(
@@ -32,6 +40,10 @@ class Bill {
         dueDate: json["dueDate"],
         amount: json["amount"],
         status: json["status"],
+        isRepeating: json["isRepeating"] == 0 ? false : true,
+        frequency: json["frequency"],
+        noOfPayments: json["noOfPayments"],
+        noOfPaidPayments: json["noOfPaidPayments"]
     );
 
     Map<String, dynamic> toMap() => {
@@ -41,5 +53,9 @@ class Bill {
         "dueDate": dueDate,
         "amount": amount,
         "status": status,
+        "isRepeating": isRepeating ? 1 : 0,
+        "frequency": frequency,
+        "noOfPayments": noOfPayments,
+        "noOfPaidPayments": noOfPaidPayments
     };
 }

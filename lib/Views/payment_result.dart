@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/paid_bill.dart';
+import 'package:swiftfunds/Models/bill.dart';
+import 'package:swiftfunds/Models/current_biller.dart';
 import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/SQLite/database_service.dart';
 import 'package:swiftfunds/Views/home.dart';
@@ -46,6 +48,40 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
     if(res>0){
       await db.updateUserPoints(payment.userId, payment.pointsEarned, payment.pointsRedeemed);
     }
+
+    if(widget.isSuccess){
+      for(final bill in widget.payment.bills){
+        if(bill.isRepeating && bill.noOfPaidPayments! + 1 < bill.noOfPayments!){
+          createNextBill(bill);
+        }
+      }
+    }
+  }
+
+  void createNextBill(Bill bill) async {
+    CurrentBiller currentBiller = bill.currentBiller!;
+
+    String nextDueDate = "";
+
+    final format = DateFormat('MM-dd-yyyy');
+    final DateTime date = format.parse(bill.dueDate);
+    if(bill.frequency == "WEEKLY"){
+      final nextDate = date.add(const Duration(days: 7));
+      nextDueDate = format.format(nextDate);
+    } else if(bill.frequency == "MONTHLY"){
+      final nextDate = date.add(const Duration(days: 30));
+      nextDueDate = format.format(nextDate);
+    } else {
+      final nextDate = date.add(const Duration(days: 90));
+      nextDueDate = format.format(nextDate);
+    }
+
+    Bill newBill = Bill(currentBillerId: currentBiller.id!, userId: bill.userId, dueDate: nextDueDate, amount: bill.amount, status: "PENDING", isRepeating: bill.isRepeating, frequency:bill.frequency, noOfPayments: bill.noOfPayments, noOfPaidPayments: bill.noOfPaidPayments! + 1);
+    var res = await db.createBill(newBill);
+    if(res>0){
+      if(!mounted) return;
+    }
+
   }
   
   @override

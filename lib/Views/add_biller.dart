@@ -26,7 +26,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
   late final acctNumberController = TextEditingController(text: widget.currentBiller != null  ? widget.currentBiller!.acctNumber :  "");
   late final acctNameController = TextEditingController(text: widget.currentBiller != null  ? widget.currentBiller!.acctName :  "");
   late final billNameController = TextEditingController(text: widget.currentBiller != null  ? widget.currentBiller!.nickname :  "");
-  late final noOfPaymentsController = TextEditingController(text: widget.currentBiller != null && widget.currentBiller!.isRepeating ? widget.currentBiller!.noOfPayments.toString() :  "");
+  late final noOfPaymentsController = TextEditingController(text: widget.bill != null && widget.bill!.isRepeating ? widget.bill!.noOfPayments.toString() :  "");
 
   bool isEditing = false;
   bool canEditBiller = false;
@@ -59,7 +59,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
       },);
     } else {
       setState(() {
-        isRepeat = widget.bill!.currentBiller!.isRepeating;
+        isRepeat = widget.bill!.isRepeating;
       },);
     }
 
@@ -68,9 +68,9 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
         canEditBiller = true;
       });
     }
-    if(widget.currentBiller != null && widget.currentBiller!.isRepeating && widget.currentBiller!.frequency != null) {
+    if(widget.bill != null && widget.bill!.isRepeating && widget.bill!.frequency != null) {
       setState(() {
-        selectedFrequency = billFrequency.firstWhere((element) => element == widget.currentBiller!.frequency!);
+        selectedFrequency = billFrequency.firstWhere((element) => element == widget.bill!.frequency!);
       });
     }
 
@@ -78,13 +78,13 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
   void addBill() async {
     int currentBillerId;
     if(widget.biller != null){
-      CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, isRepeating: isRepeat, logo: widget.biller!.logo, frequency: isRepeat ? selectedFrequency : "", noOfPayments: noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0);
+      CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, logo: widget.biller!.logo,);
       currentBillerId = await db.createCurrentBiller(currentBiller);
     }else{
       currentBillerId = widget.currentBiller!.id!;
     }
 
-    Bill bill = Bill(currentBillerId: currentBillerId, userId: loggedId, dueDate: dueDateController.text, amount: double.parse(amountController.text), status: "PENDING");
+    Bill bill = Bill(currentBillerId: currentBillerId, userId: loggedId, dueDate: dueDateController.text, amount: double.parse(amountController.text), status: "PENDING", isRepeating: isRepeat, frequency: isRepeat ? selectedFrequency : "", noOfPayments: noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0, noOfPaidPayments: 0);
     var res = await db.createBill(bill);
     if(res>0){
       if(!mounted) return;
@@ -96,10 +96,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
     CurrentBiller currBiller = widget.currentBiller!;
     List<Bill> bills = await db.getBillsByCurrentBiller(widget.currentBiller!.id!);
 
-    bool hasChanged = currBiller.acctName != acctNameController.text || currBiller.acctNumber != acctNumberController.text || currBiller.nickname != billNameController.text || currBiller.isRepeating != isRepeat;
-    if(!hasChanged && currBiller.isRepeating && isRepeat){
-      hasChanged = currBiller.frequency != selectedFrequency || currBiller.noOfPayments.toString() != noOfPaymentsController.text;
-    }
+    bool hasChanged = currBiller.acctName != acctNameController.text || currBiller.acctNumber != acctNumberController.text || currBiller.nickname != billNameController.text;
 
     return bills.length == 1 || !hasChanged;
   }
@@ -150,8 +147,8 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
   }
 
   void editBill() async {
-    var res = await db.updateBill(widget.bill!.id!, dueDateController.text, double.parse(amountController.text));
-    CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, isRepeating: isRepeat, logo: widget.biller!.logo, frequency: isRepeat ? selectedFrequency : "", noOfPayments: noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0);
+    var res = await db.updateBill(widget.bill!.id!, dueDateController.text, double.parse(amountController.text), isRepeat, selectedFrequency, int.parse(noOfPaymentsController.text));
+    CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, logo: widget.biller!.logo,);
     var res1 = await db.updateCurrentBiller(widget.currentBiller!.id!, currentBiller);
 
     if(res>0 && res1>0){
@@ -312,26 +309,6 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                 const SizedBox(height: 5,),
                                 const Text("Due Date", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
                                 InputField(hint: "MM-DD-YYYY", icon: Icons.calendar_month, controller: dueDateController, height: 50, isEditable: isEditing),
-                                        
-                                const SizedBox(height: 15,),
-                                const Text("Biller Details", style: TextStyle(fontSize: 12, color: secondaryDark)),
-                                const Divider(
-                                  color: secondaryColor, 
-                                  height: 5, 
-                                  thickness: 1,
-                                ),
-                                const SizedBox(height: 5,),
-                                const Text("Bill Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "Name of bill", icon: Icons.badge, controller: billNameController, height: 50, isEditable: isEditing && canEditBiller),
-                                        
-                                const SizedBox(height: 5,),
-                                const Text("Account Number", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "12 digit account number", icon: Icons.account_balance_wallet, controller: acctNumberController, height: 50, isEditable: isEditing && canEditBiller),
-                                        
-                                const SizedBox(height: 5,),
-                                const Text("Account Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctNameController, height: 50, isEditable: isEditing && canEditBiller),
-                                        
                                 const SizedBox(height: 10,),
                                 Row(
                                   children: [
@@ -406,6 +383,24 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                     ),
                                   ],
                                 ) : const SizedBox(),
+                                const SizedBox(height: 15,),
+                                const Text("Biller Details", style: TextStyle(fontSize: 12, color: secondaryDark)),
+                                const Divider(
+                                  color: secondaryColor, 
+                                  height: 5, 
+                                  thickness: 1,
+                                ),
+                                const SizedBox(height: 5,),
+                                const Text("Bill Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
+                                InputField(hint: "Name of bill", icon: Icons.badge, controller: billNameController, height: 50, isEditable: isEditing && canEditBiller),
+                                        
+                                const SizedBox(height: 5,),
+                                const Text("Account Number", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
+                                InputField(hint: "12 digit account number", icon: Icons.account_balance_wallet, controller: acctNumberController, height: 50, isEditable: isEditing && canEditBiller),
+                                        
+                                const SizedBox(height: 5,),
+                                const Text("Account Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
+                                InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctNameController, height: 50, isEditable: isEditing && canEditBiller),
                                 isEditing ? Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   mainAxisSize: MainAxisSize.max,
