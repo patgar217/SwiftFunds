@@ -20,7 +20,18 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   final cvvController = TextEditingController();
   final cardNameController = TextEditingController();
   final emailController = TextEditingController();
-    
+
+  bool hasError = false;
+  void validate(){
+    setState(() {
+      hasError = cardNumController.text.isEmpty || validDateController.text.isEmpty || cvvController.text.isEmpty || cardNameController.text.isEmpty || emailController.text.isEmpty;
+    });
+
+    if(!hasError){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: true,payment: widget.payment)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,6 +168,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                       ),
                                     ),
                                   ),
+                                  hasError && cardNumController.text.isEmpty ? const Text("Field is required.", style: TextStyle(fontSize: 15, fontFamily: "Verdana", color: Colors.red)) : const SizedBox(),
                                   const SizedBox(height: 15,),
                                   Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -188,7 +200,8 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                                 contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10)
                                               ),
                                             ),
-                                          )
+                                          ),
+                                          hasError && validDateController.text.isEmpty ? const Text("Field is required.", style: TextStyle(fontSize: 15, fontFamily: "Verdana", color: Colors.red)) : const SizedBox(),
                                         ],
                                       ),
                                       const Spacer(),
@@ -206,7 +219,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                             color: Colors.white,
                                             child: TextFormField(
                                               style: const TextStyle(fontSize: 15, fontFamily: "OpenSans"),
-                                              controller: cardNumController,
+                                              controller: cvvController,
                                               decoration: const InputDecoration(
                                                 border: OutlineInputBorder(
                                                   borderSide: BorderSide(
@@ -219,7 +232,9 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                                 contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10)
                                               ),
                                             ),
-                                          )
+                                          ),
+
+                                          hasError && cvvController.text.isEmpty ? const Text("Field is required.", style: TextStyle(fontSize: 15, fontFamily: "Verdana", color: Colors.red)) : const SizedBox(),
                                         ],
                                       ),
                                     ],
@@ -249,6 +264,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                       ),
                                     ),
                                   ),
+                                  hasError && cardNameController.text.isEmpty ? const Text("Field is required.", style: TextStyle(fontSize: 15, fontFamily: "Verdana", color: Colors.red)) : const SizedBox(),
                                   const SizedBox(height: 15,),
                                   const Text(
                                     "Email Address", 
@@ -274,6 +290,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                       ),
                                     ),
                                   ),
+                                  hasError && emailController.text.isEmpty ? const Text("Field is required.", style: TextStyle(fontSize: 15, fontFamily: "Verdana", color: Colors.red)) : const SizedBox(),
                                   const SizedBox(height: 20,),
                                   Center(
                                     child: Row(
@@ -288,7 +305,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                           ),
                                           child: TextButton(
                                             onPressed: (){
-                                              Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: true, payment: widget.payment)));
+                                             validate();
                                             },
                                             child: const Text(
                                               "Pay Now", 
@@ -309,7 +326,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                                           ),
                                           child: TextButton(
                                             onPressed: (){
-                                              Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: false,payment: widget.payment)));
+                                               Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: false, payment: widget.payment)));
                                             },
                                             child: const Text("Cancel", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                                           ),

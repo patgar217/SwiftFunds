@@ -128,6 +128,10 @@ class _HomeWidgetState extends State<HomeWidget> {
         canRedeemAmount = redeemLimit < widget.profile!.swiftpoints! ? redeemLimit : widget.profile!.swiftpoints!;
         totalWithPoints = isRedeem ? checkedTotal - canRedeemAmount : checkedTotal;
       });
+    }else{
+      setState(() {
+        totalWithPoints = checkedTotal;
+      });
     }
   }
   
@@ -242,8 +246,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                                   child: CupertinoSwitch(
                                     value: isRedeem,
                                     onChanged: (value) { 
-                                      setState(() => isRedeem = value);
-                                      redeemPoints();
+                                      if(canRedeemAmount > 0.00){
+                                        setState(() => isRedeem = value);
+                                        redeemPoints();
+                                      }
                                     },
                                     activeColor: secondaryDark,
                                     trackColor: const Color.fromARGB(255, 214, 214, 214),

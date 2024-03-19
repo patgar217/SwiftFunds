@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
@@ -73,8 +74,96 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
         selectedFrequency = billFrequency.firstWhere((element) => element == widget.bill!.frequency!);
       });
     }
-
   }
+  bool isAmountCorrect = true;
+  String amountError = "";
+
+  bool isDueDateCorrect = true;
+  String dueDateError = "";
+
+  bool isNoOfPaymentsCorrect = true;
+  String noOfPaymentsError = "";
+
+  bool isNickNameCorrect = true;
+
+  bool isAcctNumberCorrect = true;
+
+  bool isAcctNameCorrect = true;
+  
+  bool validateBill() {
+    checkAmount(amountController.text);
+    checkDueDate(dueDateController.text);
+    if(isRepeat){
+      checkNoOfPayments(noOfPaymentsController.text);
+    }
+    setState(() {
+      isNickNameCorrect = billNameController.text.isNotEmpty;
+      isAcctNameCorrect = acctNameController.text.isNotEmpty;
+      isAcctNumberCorrect = acctNumberController.text.isNotEmpty;
+    });
+    return isAmountCorrect && isDueDateCorrect && isNoOfPaymentsCorrect && isNickNameCorrect && isAcctNumberCorrect && isAcctNameCorrect;
+  }
+
+  void checkAmount(String amount){
+    if(amount.isEmpty){
+      setState(() {
+        isAmountCorrect = false;
+        amountError = "Please input the amount to be paid.";
+      });
+      return;
+    }
+
+    final regex = RegExp(r"^\s*[-+]?\d+(\.\d*)?\s*$");
+    setState(() {
+      isAmountCorrect = regex.hasMatch(amount);
+      amountError = "Input is not a valid amount.";
+    });
+  }
+
+  void checkDueDate(String dueDate){
+    if(dueDate.isEmpty){
+      setState(() {
+        isDueDateCorrect = false;
+        dueDateError = "Please input the due date of the bill.";
+      });
+      return;
+    }
+
+    final regex = RegExp(r"^(0?[1-9]|1[0-2])-(0?[1-9]|[12]\d|3[01])-\d{4}$");
+    if(!regex.hasMatch(dueDate)){
+      setState(() {
+        isDueDateCorrect = false;
+        dueDateError = "Invalid due date. Please follow the format: MM-DD-YYYY.";
+      });
+      return;
+    }
+
+    final now = DateTime.now();
+    final format = DateFormat('MM-dd-yyyy');
+    final parsedDate = format.parse(dueDate);
+    setState(() {
+      isDueDateCorrect = !parsedDate.isBefore(now);
+      dueDateError = "Due date cannot be due.";
+    });
+  }
+  
+  void checkNoOfPayments(String noOfPayments){
+     if(noOfPayments.isEmpty){
+      setState(() {
+        isNoOfPaymentsCorrect = false;
+        noOfPaymentsError = "Field is required.";
+      });
+      return;
+    }
+
+    final regex = RegExp(r"^[0-9]+$");
+    setState(() {
+      isNoOfPaymentsCorrect = regex.hasMatch(noOfPayments);
+      noOfPaymentsError = "Input is not a number.";
+    });
+  }
+
+  
   void addBill() async {
     int currentBillerId;
     if(widget.biller != null){
@@ -233,7 +322,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                       ),
                        Positioned(
                         top: 70,
-                        height: size.height - 110 - MediaQuery.of(context).viewInsets.bottom,
+                        height: size.height - 120 - MediaQuery.of(context).viewInsets.bottom,
                         child: SingleChildScrollView(
                           child: Container(
                             width: size.width * .95,
@@ -304,11 +393,20 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                 ),
                                 const SizedBox(height: 5,),
                                 const Text("Amount", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "P0.00", icon: Icons.monetization_on, controller: amountController, height: 50, isEditable: isEditing),
-                                        
+                                InputField(hint: "0.00", icon: Icons.monetization_on, controller: amountController, height: 50, isEditable: isEditing, isError: !isAmountCorrect,),
+                                if(!isAmountCorrect) Padding(
+                                    padding: const EdgeInsets.only(bottom: 10.0),
+                                    child: Text(amountError, textAlign: TextAlign.left, style: const TextStyle(color: Colors.red),),
+                                ),
+                                
                                 const SizedBox(height: 5,),
                                 const Text("Due Date", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "MM-DD-YYYY", icon: Icons.calendar_month, controller: dueDateController, height: 50, isEditable: isEditing),
+                                InputField(hint: "MM-DD-YYYY", icon: Icons.calendar_month, controller: dueDateController, height: 50, isEditable: isEditing, isError: !isDueDateCorrect,),
+                                if(!isDueDateCorrect) Padding(
+                                    padding: const EdgeInsets.only(bottom: 10.0),
+                                    child: Text(dueDateError, textAlign: TextAlign.left, style: const TextStyle(color: Colors.red),),
+                                ),
+
                                 const SizedBox(height: 10,),
                                 Row(
                                   children: [
@@ -371,6 +469,10 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                             ),
                                           )
                                         ),
+                                        if(!isNoOfPaymentsCorrect) const Padding(
+                                            padding: EdgeInsets.only(bottom: 10.0),
+                                            child: Text("", textAlign: TextAlign.left, style: TextStyle(color: Colors.red),),
+                                        ),
                                       ],
                                     ),
                                     const Spacer(),
@@ -378,7 +480,11 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         const Text("No. of Payments", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                        InputField(hint: "10", controller: noOfPaymentsController, height: 50, width: (size.width * .85)/2 , isEditable: isEditing && canEditBiller),
+                                        InputField(hint: "10", controller: noOfPaymentsController, height: 50, width: (size.width * .85)/2 , isEditable: isEditing && canEditBiller, isError: !isNoOfPaymentsCorrect,),
+                                        if(!isNoOfPaymentsCorrect) Padding(
+                                            padding: const EdgeInsets.only(bottom: 10.0),
+                                            child: Text(noOfPaymentsError, textAlign: TextAlign.left, style: const TextStyle(color: Colors.red),),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -392,15 +498,27 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                 ),
                                 const SizedBox(height: 5,),
                                 const Text("Bill Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "Name of bill", icon: Icons.badge, controller: billNameController, height: 50, isEditable: isEditing && canEditBiller),
+                                InputField(hint: "Name of bill", icon: Icons.badge, controller: billNameController, height: 50, isEditable: isEditing && canEditBiller, isError: !isNickNameCorrect,),
+                                if(!isNickNameCorrect) const Padding(
+                                    padding: EdgeInsets.only(bottom: 10.0),
+                                    child: Text("Bill name is required.", textAlign: TextAlign.left, style: TextStyle(color: Colors.red),),
+                                ),
                                         
                                 const SizedBox(height: 5,),
                                 const Text("Account Number", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "12 digit account number", icon: Icons.account_balance_wallet, controller: acctNumberController, height: 50, isEditable: isEditing && canEditBiller),
+                                InputField(hint: "Account Number", icon: Icons.account_balance_wallet, controller: acctNumberController, height: 50, isEditable: isEditing && canEditBiller, isError: !isAcctNumberCorrect,),
+                                if(!isAcctNumberCorrect) const Padding(
+                                    padding: EdgeInsets.only(bottom: 10.0),
+                                    child: Text("Account number is required.", textAlign: TextAlign.left, style: TextStyle(color: Colors.red),),
+                                ),
                                         
                                 const SizedBox(height: 5,),
                                 const Text("Account Name", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: primaryDark)),
-                                InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctNameController, height: 50, isEditable: isEditing && canEditBiller),
+                                InputField(hint: "Account Name", icon: Icons.account_balance, controller: acctNameController, height: 50, isEditable: isEditing && canEditBiller, isError: !isAcctNameCorrect,),
+                                if(!isAcctNameCorrect) const Padding(
+                                    padding: EdgeInsets.only(bottom: 10.0),
+                                    child: Text("Account name is required.", textAlign: TextAlign.left, style: TextStyle(color: Colors.red),),
+                                ),
                                 isEditing ? Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   mainAxisSize: MainAxisSize.max,
@@ -416,10 +534,13 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                     }, backgroundColor: secondaryColor, textSize: 15, isRounded: true, widthRatio: .2, marginTop: 10),
                                     const SizedBox(width: 5,),
                                     Button(label: "SAVE", press: (){
-                                      if(widget.bill != null){
-                                        editAction();
-                                      }else{
-                                        addBill();
+                                      bool isValidated = validateBill();
+                                      if(isValidated){
+                                        if(widget.bill != null){
+                                          editAction();
+                                        }else{
+                                          addBill();
+                                        }
                                       }
                                     }, backgroundColor: secondaryDark, textSize: 15, isRounded: true, widthRatio: .2, marginTop: 10,),
                                   ],

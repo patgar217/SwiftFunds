@@ -33,6 +33,12 @@ class DatabaseService {
     return res.isNotEmpty? User.fromMap(res.first):null;
   }
 
+  Future<User?> getUserByField(String field, String value) async {
+    final Database db = await dbHelper.initDB();
+    var res = await db.query("user", where: "$field = ?", whereArgs: [value]);
+    return res.isNotEmpty ? User.fromMap(res.first) : null;
+  }
+
   Future<User> getUserById(int id)async{
     final Database db = await dbHelper.initDB();
     var res = await db.query("user",where: "userId = ?", whereArgs: [id]);

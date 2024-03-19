@@ -9,17 +9,19 @@ class InputField extends StatelessWidget {
   final double? height;
   final double? width;
   final bool isEditable;
+  final bool? isError;
   
   const InputField({super.key,
     required this.hint,
     this.icon,
     required this.controller,
-    this.passwordInvisible = false, this.height, this.width, required this.isEditable});
+    this.passwordInvisible = false, this.height, this.width, required this.isEditable, this.isError});
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    bool isWrong = isError != null && isError!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       margin: const EdgeInsets.symmetric(vertical: 5),
@@ -29,7 +31,7 @@ class InputField extends StatelessWidget {
         color: primaryLightest,
         borderRadius: BorderRadius.circular(8),
         border: Border.all( // Add a border around all sides
-          color: isEditable ? primaryDark : backgroundColor, // Set the desired border color
+          color: isWrong ? Colors.red : (isEditable ? primaryDark : backgroundColor), // Set the desired border color
           width: 1, // Optional: Set the border width (default is 1.0)
         ),
       ),

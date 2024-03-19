@@ -19,6 +19,17 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
 
     final loginIdController = TextEditingController();
     final passwordController = TextEditingController();
+
+    bool hasError = false;
+    void validate(){
+      setState(() {
+        hasError = loginIdController.text.isEmpty || passwordController.text.isEmpty;
+      });
+
+      if(!hasError){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> BankAccountScreen(paymentMethod: widget.paymentMethod, payment: widget.payment,)));
+      }
+    }
     
     @override
     Widget build(BuildContext context) {
@@ -130,6 +141,7 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                   )
                 ],
               ),
+              hasError ? const Text("Please input login id and password.", style: TextStyle(fontSize: 15, fontFamily: "Verdana", color: Colors.red)) : const SizedBox(),
               const SizedBox(height: 10,),
               Row(
                 children: [
@@ -146,7 +158,7 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                     ),
                     child: TextButton(
                       onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> BankAccountScreen(paymentMethod: widget.paymentMethod, payment: widget.payment,)));
+                        validate();
                       },
                       child: const Text("Continue", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                     ),
@@ -165,7 +177,7 @@ class _BankPaymentScreenState extends State<BankPaymentScreen> {
                     ),
                     child: TextButton(
                       onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: false,payment: widget.payment)));
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: false, payment: widget.payment)));
                       },
                       child: const Text("Cancel", style: TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                     ),

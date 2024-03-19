@@ -86,7 +86,7 @@ class Transactions extends StatelessWidget {
                         left: size.width * .05,
                         child: const Text("Transaction History", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
                       ),
-                      Positioned(
+                      if (payments.isNotEmpty) Positioned(
                         top: 70,
                         height: size.height - 100,
                         child: SingleChildScrollView(
@@ -96,6 +96,16 @@ class Transactions extends StatelessWidget {
                             }).toList(),
                           ),
                         )
+                      ) else Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.receipt_long, size: 150, color: primaryLight),
+                            SizedBox(
+                              width: size.width *.70, 
+                              child: const Text("You don't have any transactions yet",textAlign: TextAlign.center, style: TextStyle(fontSize: 25, color: primaryLight), overflow: TextOverflow.clip,)),
+                          ],
+                        ),
                       ),
                     ]
                   )

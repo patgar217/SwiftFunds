@@ -21,9 +21,22 @@ class LoginScreen extends StatefulWidget {
 class _LoginState extends State<LoginScreen> {
   final usrNameController = TextEditingController();
   final passwordController = TextEditingController();
-  bool isLoginTrue = false;
 
   final db = DatabaseService();
+
+  String error = "";
+  bool isLoginCorrect = true;
+
+  validate() async {
+    if(usrNameController.text.isEmpty || passwordController.text.isEmpty){
+      setState(() {
+        isLoginCorrect = false;
+        error="Please input username and password.";
+      });
+    }else{
+      login();
+    }
+  }
   
   login() async{
       final prefs = await SharedPreferences.getInstance();
@@ -34,7 +47,8 @@ class _LoginState extends State<LoginScreen> {
         Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
       }else{
         setState(() {
-          isLoginTrue = true;
+          isLoginCorrect = false;
+          error="Username or password is incorrect.";
         });
       }
     }
@@ -42,7 +56,6 @@ class _LoginState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
 
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Center(
@@ -63,22 +76,15 @@ class _LoginState extends State<LoginScreen> {
                   padding: EdgeInsets.only(bottom: 40),
                   child: Text("Please sign in to continue", style: TextStyle(fontSize: 18, color: primaryDark)),
                 ),
-                InputField(hint: "Username", icon: Icons.account_circle, controller: usrNameController, isEditable: true),
-                InputField(hint: "Password", icon: Icons.lock, controller: passwordController, passwordInvisible: true, isEditable: true),
+                InputField(hint: "Username", icon: Icons.account_circle, controller: usrNameController, isEditable: true, isError: !isLoginCorrect,),
+                InputField(hint: "Password", icon: Icons.lock, controller: passwordController, passwordInvisible: true, isEditable: true, isError: !isLoginCorrect),
+                if(!isLoginCorrect) Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Text(error, textAlign: TextAlign.left, style: const TextStyle(color: Colors.red),),
+                ),
 
-                isLoginTrue ? Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: size.width * .05, vertical: 5),
-                      child: Text(
-                        "Username or password is incorrect.",
-                        style: TextStyle(color: Colors.red.shade900),
-                      ),
-                    ),
-                  ],
-                ) : const SizedBox(),
                 Button(label: "LOGIN", backgroundColor: primaryDark, textSize: 20, press: (){
-                  login();
+                  validate();
                 }),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

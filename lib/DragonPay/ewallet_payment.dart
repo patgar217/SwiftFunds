@@ -13,8 +13,19 @@ class EWalletPaymentScreen extends StatefulWidget {
 }
 
 class _EWalletPaymentScreenState extends State<EWalletPaymentScreen> {
-  final acctController = TextEditingController();
-  final pinController = TextEditingController();
+  final acctController = TextEditingController(text: "");
+  final pinController = TextEditingController(text: "");
+
+  bool hasError = false;
+  void validate(){
+    setState(() {
+      hasError = acctController.text.isEmpty || pinController.text.isEmpty;
+    });
+    if(!hasError){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: true,payment: widget.payment)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,6 +124,7 @@ class _EWalletPaymentScreenState extends State<EWalletPaymentScreen> {
                   )
                 ],
               ),
+              hasError ? const Text("Please input email/mobile no. and PIN.", style: TextStyle(fontSize: 15, fontFamily: "Verdana", color: Colors.red)) : const SizedBox(),
               const SizedBox(height: 10,),
               Center(
                 child: Row(
@@ -131,7 +143,7 @@ class _EWalletPaymentScreenState extends State<EWalletPaymentScreen> {
                       ),
                       child: TextButton(
                         onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PaymentResultScreen(isSuccess: true, payment: widget.payment)));
+                          validate();
                         },
                         child: Text("Pay ₱${widget.payment.totalAmountWithPoints.toStringAsFixed(2)}", style: const TextStyle(fontFamily: "Verdana", fontSize: 13.0, color: Colors.black, height: 1)),
                       ),
