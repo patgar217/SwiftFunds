@@ -9,8 +9,9 @@ import 'package:swiftfunds/Components/bill_widget.dart';
 import 'package:swiftfunds/Components/header.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/my_bills.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/authentication_service.dart';
+import 'package:swiftfunds/Services/bill_service.dart';
+import 'package:swiftfunds/Services/payment_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isProfileLoaded = false;
   late List<Bill> pendingBills;
 
-  final db = DatabaseService();
+  final authService = AuthenticationService();
+  final billService = BillService();
   
   @override
   void initState() {
@@ -33,21 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   loadProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    String loggedUserName = prefs.getString("loggedUserName") ?? "";
+    profile = await authService.getCurrentUser();
 
-    profile = (await db.getUser(loggedUserName))!;
+    pendingBills = await billService.getPendingBills(profile.userId!);
 
-    prefs.setInt("loggedId", profile.userId!);
-
-    pendingBills = await db.getBillsByUserIdAndStatus(profile.userId!, "PENDING");
-
-    pendingBills.sort((a, b) {
-      final dateFormatter = DateFormat('MM-dd-yyyy');
-      final dateA = dateFormatter.parse(a.dueDate);
-      final dateB = dateFormatter.parse(b.dueDate);
-      return dateA.compareTo(dateB);
-    });
     setState(() {
       isProfileLoaded = true;
     });
@@ -94,7 +85,6 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  final db = DatabaseService();
   bool isRedeem = false;
   bool isAll = false;
 
@@ -103,6 +93,8 @@ class _HomeWidgetState extends State<HomeWidget> {
   double redeemLimit = 0.00;
   double canRedeemAmount = 0.00;
   double totalWithPoints = 0.00;
+
+  final paymentService = PaymentService();
 
   void triggerCheck(bool isChecked, Bill bill ){
     if(isChecked){
@@ -137,18 +129,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   
 
   void createPayment() async {
-    Payment initialPayment =  Payment(
-      userId: widget.profile!.userId!, 
-      totalAmount: checkedTotal,
-      pointsEarned: 0.00,
-      pointsRedeemed: isRedeem ? canRedeemAmount : 0.00,
-      paymentDate: "",
-      status: "PENDING",
-      bills: checkedBills,
-      totalAmountWithPoints: totalWithPoints
-    );
-
-    Payment result = await db.createPayment(initialPayment);
+    Payment result = await paymentService.createPendingPayment(widget.profile!.userId!, checkedTotal, isRedeem, canRedeemAmount, checkedBills, totalWithPoints);
     result.bills = checkedBills;
 
     if(!mounted)return;

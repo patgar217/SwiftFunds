@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Components/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/authentication_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,6 +13,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final db = DatabaseService();
+  final authService = AuthenticationService();
   User? profile;
   bool isProfileLoaded = false;
 
@@ -23,10 +24,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   loadProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    String loggedUserName = prefs.getString("loggedUserName") ?? "";
-
-    profile = await db.getUser(loggedUserName);
+    profile = await authService.getCurrentUser();
+    
     setState(() {
       isProfileLoaded = true;
     });

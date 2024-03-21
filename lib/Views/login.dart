@@ -1,4 +1,5 @@
 import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/authentication_service.dart';
 
 import '../Models/user.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,6 @@ import 'package:swiftfunds/Views/signup.dart';
 import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/textfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({ super.key });
@@ -23,6 +21,7 @@ class _LoginState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   final db = DatabaseService();
+  final authService = AuthenticationService();
 
   String error = "";
   bool isLoginCorrect = true;
@@ -39,11 +38,12 @@ class _LoginState extends State<LoginScreen> {
   }
   
   login() async{
-      final prefs = await SharedPreferences.getInstance();
       var res = await db.authenticate(User(username: usrNameController.text, password: passwordController.text));
       if(res == true){
+        User user = (await db.getUser(usrNameController.text))!;
+        authService.setLoggedUser(user.username, user.userId!);
+
         if(!mounted)return;
-        prefs.setString("loggedUserName", usrNameController.text);
         Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
       }else{
         setState(() {

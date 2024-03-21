@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
-import 'package:swiftfunds/SQLite/database_helper.dart';
-import 'package:swiftfunds/Views/about.dart';
+import 'package:swiftfunds/Services/authentication_service.dart';
+import 'package:swiftfunds/Views/under_construction.dart';
 import 'package:swiftfunds/Views/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/Views/transaction_history.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -15,11 +14,10 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
 
-  final db = DatabaseHelper();
-  
-  logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("loggedUserName");
+  final authService = AuthenticationService();
+
+  logout() {
+    authService.logout();
   }
 
   @override
@@ -61,7 +59,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       trailing: const Icon(Icons.arrow_right,size: 30),
                       title: const Text("SwiftPoints", style: TextStyle(fontSize: 18)),
                       onTap: (){
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const AboutScreen()));
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const UnderConstructionScreen()));
                       }
                     ),
                     const Divider(
@@ -75,7 +73,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       trailing: const Icon(Icons.arrow_right,size: 30),
                       title: const Text("Settings", style: TextStyle(fontSize: 18)),
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const AboutScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const UnderConstructionScreen()));
                       }
                     ),
                     const Divider(
@@ -89,7 +87,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       trailing: const Icon(Icons.arrow_right,size: 30),
                       title: const Text("Help", style: TextStyle(fontSize: 18)),
                       onTap: (){
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const AboutScreen()));
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const UnderConstructionScreen()));
                       }
                     ),
                     const Divider(
@@ -103,7 +101,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       trailing: const Icon(Icons.arrow_right,size: 30),
                       title: const Text("Terms and Conditions", style: TextStyle(fontSize: 18)),
                       onTap: (){
-                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const AboutScreen()));
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const UnderConstructionScreen()));
                       }
                     ),
                     const Divider(

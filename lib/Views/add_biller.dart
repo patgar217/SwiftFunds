@@ -7,7 +7,8 @@ import 'package:swiftfunds/Components/textfield.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/biller.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
-import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/bill_service.dart';
+import 'package:swiftfunds/Services/current_biller_service.dart';
 import 'package:swiftfunds/Views/home.dart';
 
 class AddBillerScreen extends StatefulWidget {
@@ -39,7 +40,8 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
   ];
   late String selectedFrequency = billFrequency[1];
   late int loggedId;
-  final db = DatabaseService();
+  final billService = BillService();
+  final currentBillerService = CurrentBillerService();
 
   bool isRepeat = false;
 
@@ -165,16 +167,32 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
 
   
   void addBill() async {
-    int currentBillerId;
+    var res = 0;
     if(widget.biller != null){
-      CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, logo: widget.biller!.logo,);
-      currentBillerId = await db.createCurrentBiller(currentBiller);
+      res = await billService.addBillWithBiller(widget.biller!, loggedId, billNameController.text, acctNameController.text, acctNumberController.text, dueDateController.text, double.parse(amountController.text), isRepeat, isRepeat ? selectedFrequency : "", noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0);
     }else{
-      currentBillerId = widget.currentBiller!.id!;
+      res = await billService.addBillWithCurrentBiller(widget.currentBiller!, loggedId, dueDateController.text, double.parse(amountController.text), isRepeat, isRepeat ? selectedFrequency : "", noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0);
     }
+    if(res>0){
+      if(!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
+    }
+  }
 
-    Bill bill = Bill(currentBillerId: currentBillerId, userId: loggedId, dueDate: dueDateController.text, amount: double.parse(amountController.text), status: "PENDING", isRepeating: isRepeat, frequency: isRepeat ? selectedFrequency : "", noOfPayments: noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0, noOfPaidPayments: 0);
-    var res = await db.createBill(bill);
+
+  void editBill() async {
+    var res = await billService.editBill(widget.bill!, loggedId, dueDateController.text, double.parse(amountController.text), isRepeat, selectedFrequency, int.parse(noOfPaymentsController.text));
+    var res1 = await currentBillerService.updateCurrentBiller(widget.currentBiller!, loggedId, widget.biller!, billNameController.text, acctNameController.text, acctNumberController.text);
+
+    if(res>0 && res1>0){
+      if(!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
+    }
+  }
+
+
+  deleteBill() async {
+    var res = await billService.deleteBill(widget.bill!);
     if(res>0){
       if(!mounted) return;
       Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
@@ -183,11 +201,11 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
 
   Future<bool> checkCurrentBiller() async {
     CurrentBiller currBiller = widget.currentBiller!;
-    List<Bill> bills = await db.getBillsByCurrentBiller(widget.currentBiller!.id!);
+    int billsLength = await currentBillerService.getBillsSize(currBiller);
 
     bool hasChanged = currBiller.acctName != acctNameController.text || currBiller.acctNumber != acctNumberController.text || currBiller.nickname != billNameController.text;
 
-    return bills.length == 1 || !hasChanged;
+    return billsLength == 1 || !hasChanged;
   }
 
   void editAction() async {
@@ -235,17 +253,6 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
 
   }
 
-  void editBill() async {
-    var res = await db.updateBill(widget.bill!.id!, dueDateController.text, double.parse(amountController.text), isRepeat, selectedFrequency, int.parse(noOfPaymentsController.text));
-    CurrentBiller currentBiller = CurrentBiller(userId: loggedId, billerId: widget.biller!.id, nickname: billNameController.text, acctName: acctNameController.text, acctNumber: acctNumberController.text, logo: widget.biller!.logo,);
-    var res1 = await db.updateCurrentBiller(widget.currentBiller!.id!, currentBiller);
-
-    if(res>0 && res1>0){
-      if(!mounted) return;
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
-    }
-  }
-
   showDeleteAlert() {
     final yesButton = TextButton(
       child: const Text("Yes", style: TextStyle(color: Colors.red, fontSize: 15),),
@@ -278,14 +285,6 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
       context: context,
       builder: (context) => alert,
     );
-  }
-
-  deleteBill() async {
-    var res = await db.deleteBill(widget.bill!.id!);
-    if(res>0){
-      if(!mounted) return;
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
-    }
   }
 
   @override

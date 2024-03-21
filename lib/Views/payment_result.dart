@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/paid_bill.dart';
 import 'package:swiftfunds/Models/bill.dart';
-import 'package:swiftfunds/Models/current_biller.dart';
 import 'package:swiftfunds/Models/payment.dart';
-import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/bill_service.dart';
+import 'package:swiftfunds/Services/payment_service.dart';
+import 'package:swiftfunds/Services/user_service.dart';
 import 'package:swiftfunds/Views/home.dart';
 
 class PaymentResultScreen extends StatefulWidget {
@@ -19,9 +19,12 @@ class PaymentResultScreen extends StatefulWidget {
 }
 
 class _PaymentResultScreenState extends State<PaymentResultScreen> {
-  final db = DatabaseService();
   double pointsToBeRedeemed = 0.00;
-  
+
+  final paymentService = PaymentService();
+  final userService = UserService();
+  final billService = BillService();
+
   @override
   void initState() {
     super.initState();
@@ -32,22 +35,9 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
     setState(() {
       pointsToBeRedeemed = widget.payment.pointsRedeemed;
     });
-
-    DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('MM-dd-yyyy HH:mm a');
-    String formattedDateTime = formatter.format(now);
-
-    Payment payment = widget.payment;
-    payment.paymentDate = formattedDateTime;
-    payment.pointsEarned = widget.isSuccess ? payment.totalAmount * 0.0001 : 0.00;
-    payment.pointsRedeemed = widget.isSuccess ? payment.pointsRedeemed : 0.00;
-    payment.status = widget.isSuccess ? "SUCCESS" : "FAILED";
     
-    var res = await db.updatePayment(widget.payment.id!, payment);
-
-    if(res>0){
-      await db.updateUserPoints(payment.userId, payment.pointsEarned, payment.pointsRedeemed);
-    }
+    Payment payment = await paymentService.updatePayment(widget.payment, widget.isSuccess);
+    userService.updateSwiftPoint(payment.userId, payment.pointsEarned, payment.pointsRedeemed);
 
     if(widget.isSuccess){
       for(final bill in widget.payment.bills){
@@ -59,29 +49,10 @@ class _PaymentResultScreenState extends State<PaymentResultScreen> {
   }
 
   void createNextBill(Bill bill) async {
-    CurrentBiller currentBiller = bill.currentBiller!;
-
-    String nextDueDate = "";
-
-    final format = DateFormat('MM-dd-yyyy');
-    final DateTime date = format.parse(bill.dueDate);
-    if(bill.frequency == "WEEKLY"){
-      final nextDate = date.add(const Duration(days: 7));
-      nextDueDate = format.format(nextDate);
-    } else if(bill.frequency == "MONTHLY"){
-      final nextDate = date.add(const Duration(days: 30));
-      nextDueDate = format.format(nextDate);
-    } else {
-      final nextDate = date.add(const Duration(days: 90));
-      nextDueDate = format.format(nextDate);
-    }
-
-    Bill newBill = Bill(currentBillerId: currentBiller.id!, userId: bill.userId, dueDate: nextDueDate, amount: bill.amount, status: "PENDING", isRepeating: bill.isRepeating, frequency:bill.frequency, noOfPayments: bill.noOfPayments, noOfPaidPayments: bill.noOfPaidPayments! + 1);
-    var res = await db.createBill(newBill);
+    var res = await billService.createNextBill(bill);
     if(res>0){
       if(!mounted) return;
     }
-
   }
   
   @override

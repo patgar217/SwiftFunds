@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/biller_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Models/biller.dart';
-import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/biller_service.dart';
 
 class BillerListScreen extends StatefulWidget {
   final String categoryName;
@@ -19,7 +19,7 @@ class _BillerListScreenState extends State<BillerListScreen> {
   late List<Biller> billers;
   bool isLoaded = false;
 
-  final db = DatabaseService();
+  final billerService = BillerService();
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _BillerListScreenState extends State<BillerListScreen> {
   }
 
   loadBillers() async {
-    billers = await db.getBillersByCategory(widget.categoryId);
+    billers = await billerService.getBillersByCategory(widget.categoryId);
 
     setState(() {
       isLoaded = true;

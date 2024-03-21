@@ -1,9 +1,9 @@
-import 'package:swiftfunds/SQLite/database_service.dart';
+
+import 'package:swiftfunds/Services/user_service.dart';
 
 import '../Components/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Views/login.dart';
-import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/textfield.dart';
 
@@ -33,7 +33,7 @@ class _SignUpState extends State<SignUpScreen> {
   String passwordError = "";
   String confirmPasswordError = "";
 
-  final db = DatabaseService();
+  final userService = UserService();
 
   validateSignUp() async {
     setState(() {
@@ -59,9 +59,9 @@ class _SignUpState extends State<SignUpScreen> {
     }
 
     try {
-      final user = await db.getUserByField("username", username);
+      bool hasDuplicateUsername = await userService.hasDuplicateUsername(username);
       setState(() {
-        isUserNameCorrect = user == null;
+        isUserNameCorrect = !hasDuplicateUsername;
         usernameError = "Username is already used.";
       });
     } on Exception catch (e) {
@@ -82,9 +82,9 @@ class _SignUpState extends State<SignUpScreen> {
     }
 
     try {
-      final user = await db.getUserByField("email", email);
+      bool hasDuplicateEmail = await userService.hasDuplicateEmail(email);
       setState(() {
-        isEmailCorrect = user == null;
+        isEmailCorrect = !hasDuplicateEmail;
         emailError = "Email is already used.";
       });
     } on Exception catch (e) {
@@ -122,9 +122,9 @@ class _SignUpState extends State<SignUpScreen> {
     });
   }
 
-  signUp()async{
+  signUp() async {
     try{
-      var res = await db.createUser(User(fullName: fullName.text,email: email.text,username: usrName.text, password: password.text, swiftpoints: 0.00));
+      var res = await userService.createNewUser(fullName.text, email.text, usrName.text, password.text);
       if(res>0){
         if(!mounted)return;
         Navigator.push(context, MaterialPageRoute(builder: (context)=> const LoginScreen()));

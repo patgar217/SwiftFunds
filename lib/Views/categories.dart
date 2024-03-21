@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/category_widget.dart';
 import 'package:swiftfunds/Components/current_billers_list.dart';
 import 'package:swiftfunds/Models/category.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
-import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/authentication_service.dart';
+import 'package:swiftfunds/Services/category_service.dart';
+import 'package:swiftfunds/Services/current_biller_service.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -20,7 +21,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   late List<Category> categories;
   bool isLoaded = false;
   
-  final db = DatabaseService();
+  final authService = AuthenticationService();
+  final currentBillerService = CurrentBillerService();
+  final categoryService = CategoryService();
 
   @override
   void initState() {
@@ -30,11 +33,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   loadCategoriesAndBillers() async {
 
-    final prefs = await SharedPreferences.getInstance();
-    int loggedId = prefs.getInt("loggedId")!;
+    int loggedId = await authService.getLoggedId();
 
-    currentBillers = await db.getCurrentBillersByUserId(loggedId);
-    categories = await db.getCategories();
+    currentBillers = await currentBillerService.getCurrentBillersByUserId(loggedId);
+    categories = await categoryService.getCategories();
 
     setState(() {
       isLoaded = true;

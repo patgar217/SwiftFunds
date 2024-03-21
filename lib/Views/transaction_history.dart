@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/payment_widget.dart';
 import 'package:swiftfunds/Models/payment.dart';
-import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/authentication_service.dart';
+import 'package:swiftfunds/Services/payment_service.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -16,7 +16,8 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   bool isPaymentsLoaded = false;
   late List<Payment> payments;
 
-  final db = DatabaseService();
+  final authService = AuthenticationService();
+  final paymentService = PaymentService();
   
   @override
   void initState() {
@@ -25,10 +26,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   }
 
   loadPayments() async {
-    final prefs = await SharedPreferences.getInstance();
-    int loggedId = prefs.getInt("loggedId")!;
+    int loggedId = await authService.getLoggedId();
 
-    payments = await db.getPayments(loggedId);
+    payments = await paymentService.getPayments(loggedId);
     
     setState(() {
       isPaymentsLoaded = true;

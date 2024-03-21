@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/biller.dart';
-import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/biller_service.dart';
 import 'package:swiftfunds/Views/add_biller.dart';
 
 class BillWidget extends StatefulWidget {
@@ -24,7 +24,8 @@ class BillWidget extends StatefulWidget {
 class _BillWidgetState extends State<BillWidget> {
   late bool isBillPaid = widget.isChecked;
   late Biller biller;
-  final db = DatabaseService();
+  
+  final billerService = BillerService();
   
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _BillWidgetState extends State<BillWidget> {
   }
 
   loadProfile() async {
-    biller = await db.getBillerById(widget.bill.currentBiller!.billerId);
+    biller = await billerService.getBiller(widget.bill.currentBiller!.billerId);
   }
   
   @override
