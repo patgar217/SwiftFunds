@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:swiftfunds/DragonPay/payment_method.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/payment.dart';
@@ -11,6 +10,7 @@ import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/my_bills.dart';
 import 'package:swiftfunds/Services/authentication_service.dart';
 import 'package:swiftfunds/Services/bill_service.dart';
+import 'package:swiftfunds/Services/date_time_service.dart';
 import 'package:swiftfunds/Services/payment_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -62,16 +62,6 @@ class HomeWidget extends StatefulWidget {
   final User? profile;
   final List<Bill> pendingBills;
 
-  int getDaysUntilDate(String dateString) {
-    final formattedDate = DateFormat('MM-dd-yyyy').parse(dateString);
-
-    final now = DateTime.now();
-
-    final difference = formattedDate.difference(now);
-
-    return difference.inDays;
-  }
-
   double getTotalBill() {
     double total = 0.0;
     for (var bill in pendingBills) {
@@ -95,6 +85,12 @@ class _HomeWidgetState extends State<HomeWidget> {
   double totalWithPoints = 0.00;
 
   final paymentService = PaymentService();
+
+  final dateTimeService = DateTimeService();
+
+  int getDaysUntilDate(String dateString) {
+    return dateTimeService.getDaysUntilDate(dateString);
+  }
 
   void triggerCheck(bool isChecked, Bill bill ){
     if(isChecked){
@@ -183,7 +179,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 currNickname: currentBiller.nickname,
                                 currId: currentBiller.acctNumber,
                                 isChecked: false,
-                                dueDays: widget.getDaysUntilDate(bill.dueDate),
+                                dueDays: getDaysUntilDate(bill.dueDate),
                                 amount: bill.amount,
                                 image: currentBiller.logo,
                                 triggerCheck: triggerCheck,

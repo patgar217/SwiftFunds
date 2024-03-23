@@ -1,11 +1,12 @@
-import 'package:intl/intl.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/date_time_service.dart';
 
 class PaymentService {
   
   final db = DatabaseService();
+  final dateTimeService = DateTimeService();
 
   Future<Payment> createPayment(Payment payment) async {
     return await db.createPayment(payment);
@@ -32,8 +33,7 @@ class PaymentService {
 
   Future<Payment> updatePayment(payment, isSuccess) async {
     DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('MM-dd-yyyy HH:mm a');
-    String formattedDateTime = formatter.format(now);
+    String formattedDateTime = dateTimeService.convertWordFormatToString(now);
 
     Payment updatedPayment = payment;
     updatedPayment.paymentDate = formattedDateTime;

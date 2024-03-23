@@ -3,6 +3,7 @@ import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/biller.dart';
 import 'package:swiftfunds/Models/category.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
+import 'package:swiftfunds/Models/notification.dart';
 import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/SQLite/database_helper.dart';
@@ -284,15 +285,30 @@ class DatabaseService {
   }
 
   Future<List<int>> getBillIdsByPaymentId(int paymentId) async {
-  final Database db = await dbHelper.initDB();
-  final List<Map<String, dynamic>> maps = await db.query(
-    'paymentBill',
-    where: 'paymentId = ?',
-    whereArgs: [paymentId],
-  );
+    final Database db = await dbHelper.initDB();
+    final List<Map<String, dynamic>> maps = await db.query(
+      'paymentBill',
+      where: 'paymentId = ?',
+      whereArgs: [paymentId],
+    );
 
-  return maps.map((map) => map['billId'] as int).toList();
-}
+    return maps.map((map) => map['billId'] as int).toList();
+  }
+
+   Future<int> createNotification(NotificationModel notification)async{
+    final Database db = await dbHelper.initDB();
+    return db.insert("notification", notification.toMap());
+  }
+
+  Future<List<NotificationModel>> getNotificationByBillId(int billId) async {
+    final Database db = await dbHelper.initDB();
+    final maps = await db.query(
+      "notification",
+      where: 'billId = ?',
+      whereArgs: [billId],
+    );
+    return List.generate(maps.length, (i) => NotificationModel.fromMap(maps[i]));
+  }
 
 
 }

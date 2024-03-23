@@ -80,6 +80,14 @@ class DatabaseHelper{
    )
    ''';
 
+  String notificationTable = '''
+   CREATE TABLE notification (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   billId INTEGER,
+   dueDays INTEGER
+   )
+   ''';
+
   //Our connection is ready
   Future<Database> initDB ()async{
     final databasePath = await getDatabasesPath();
@@ -93,6 +101,7 @@ class DatabaseHelper{
       await db.execute(billTable);
       await db.execute(paymentTable);
       await db.execute(paymentBillTable);
+      await db.execute(notificationTable);
       await insertDefaultUser(db);
       await insertDefaultCategories(db);
       await insertDefaultBillers(db);
