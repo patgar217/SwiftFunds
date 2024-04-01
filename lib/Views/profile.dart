@@ -3,6 +3,7 @@ import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/SQLite/database_service.dart';
 import 'package:swiftfunds/Services/authentication_service.dart';
+import 'package:swiftfunds/Views/login.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -24,11 +25,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   loadProfile() async {
-    profile = await authService.getCurrentUser();
+    User? user = await authService.getCurrentUser();
+
+    if(user != null){
+      profile = user;
+
+      setState(() {
+        isProfileLoaded = true;
+      });
+    }else{
+      if(!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context)  => const LoginScreen()));
+    }
     
-    setState(() {
-      isProfileLoaded = true;
-    });
   }
 
   @override

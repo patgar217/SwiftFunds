@@ -26,7 +26,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   }
 
   loadPayments() async {
-    int loggedId = await authService.getLoggedId();
+    int loggedId = (await authService.getLoggedId())!;
 
     payments = await paymentService.getPayments(loggedId);
     

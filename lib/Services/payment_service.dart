@@ -1,11 +1,13 @@
-import 'package:intl/intl.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/date_time_service.dart';
+import 'package:swiftfunds/Services/notification_service.dart';
 
 class PaymentService {
   
   final db = DatabaseService();
+  final dateTimeService = DateTimeService();
 
   Future<Payment> createPayment(Payment payment) async {
     return await db.createPayment(payment);
@@ -30,10 +32,9 @@ class PaymentService {
     return await db.getPayments(userId);
   }
 
-  Future<Payment> updatePayment(payment, isSuccess) async {
+  Future<Payment> updatePayment(Payment payment, bool isSuccess) async {
     DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('MM-dd-yyyy HH:mm a');
-    String formattedDateTime = formatter.format(now);
+    String formattedDateTime = dateTimeService.convertWordFormatToString(now);
 
     Payment updatedPayment = payment;
     updatedPayment.paymentDate = formattedDateTime;
@@ -42,6 +43,12 @@ class PaymentService {
     updatedPayment.status = isSuccess ? "SUCCESS" : "FAILED";
 
     await db.updatePayment(updatedPayment.id!, updatedPayment);
+
+    if(isSuccess){
+      for (var bill in payment.bills) {
+        await NotificationService.deleteNotification(bill.id!);
+      }
+    }
     return updatedPayment;
   }
 }

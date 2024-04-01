@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:swiftfunds/DragonPay/payment_method.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/payment.dart';
@@ -11,7 +10,9 @@ import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Components/my_bills.dart';
 import 'package:swiftfunds/Services/authentication_service.dart';
 import 'package:swiftfunds/Services/bill_service.dart';
+import 'package:swiftfunds/Services/date_time_service.dart';
 import 'package:swiftfunds/Services/payment_service.dart';
+import 'package:swiftfunds/Views/login.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final authService = AuthenticationService();
   final billService = BillService();
+  final dateTimeService = DateTimeService();
   
   @override
   void initState() {
@@ -35,19 +37,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   loadProfile() async {
-    profile = await authService.getCurrentUser();
+    User? user = await authService.getCurrentUser();
 
-    pendingBills = await billService.getPendingBills(profile.userId!);
+    if(user != null){
+      profile = user;
 
-    setState(() {
-      isProfileLoaded = true;
-    });
+      pendingBills = await billService.getPendingBills(profile.userId!);
+
+      setState(() {
+        isProfileLoaded = true;
+      });
+    }else{
+      if(!mounted) return;
+      Navigator.push(context, MaterialPageRoute(builder: (context)  => const LoginScreen()));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (isProfileLoaded) {
-      return HomeWidget(profile: profile, pendingBills: pendingBills,);
+      return HomeWidget(profile: profile, pendingBills: pendingBills, dateTimeService: dateTimeService,);
     } else {
       return const Center(child: CircularProgressIndicator()); // Show loading indicator
     }
@@ -56,20 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({
-    super.key, this.profile, required this.pendingBills,
+    super.key, this.profile, required this.pendingBills, required this.dateTimeService,
   });
 
   final User? profile;
   final List<Bill> pendingBills;
+  final DateTimeService dateTimeService;
 
   int getDaysUntilDate(String dateString) {
-    final formattedDate = DateFormat('MM-dd-yyyy').parse(dateString);
-
-    final now = DateTime.now();
-
-    final difference = formattedDate.difference(now);
-
-    return difference.inDays;
+    return dateTimeService.getDaysUntilDate(dateString);
   }
 
   double getTotalBill() {

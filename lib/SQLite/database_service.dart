@@ -94,6 +94,16 @@ class DatabaseService {
     return db.insert("bill", bill.toMap());
   }
 
+  Future<Bill> getBill(int id)async{
+    final Database db = await dbHelper.initDB();
+    var res = await db.query("bill",where: "id = ?", whereArgs: [id]);
+    Bill bill = Bill.fromMap(res.first);
+    CurrentBiller currentBiller = await getCurrentBiller(bill.currentBillerId);
+    bill.currentBiller = currentBiller;
+    return bill;
+  }
+
+
   Future<List<Bill>> getBills(int userId) async {
     final Database db = await dbHelper.initDB();
     final maps = await db.query(

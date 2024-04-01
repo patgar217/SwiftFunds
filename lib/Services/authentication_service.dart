@@ -6,9 +6,9 @@ class AuthenticationService {
   
   final userService = UserService();
   
-  Future<int> getLoggedId() async {
+  Future<int?> getLoggedId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt("loggedId")!;
+    return prefs.getInt("loggedId");
   }
 
   void setLoggedUser(String userName, int userId) async{
@@ -21,8 +21,11 @@ class AuthenticationService {
     prefs.remove("loggedId");
   }
 
-  Future<User> getCurrentUser() async {
-    int loggedId = await getLoggedId();
-    return userService.getUserById(loggedId);
+  Future<User?> getCurrentUser() async {
+    int? loggedId = await getLoggedId();
+    if (loggedId != null){
+      return userService.getUserById(loggedId);
+    }
+    return null;
   }
 }

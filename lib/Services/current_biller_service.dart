@@ -2,6 +2,7 @@ import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/biller.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
 import 'package:swiftfunds/SQLite/database_service.dart';
+import 'package:swiftfunds/Services/notification_service.dart';
 
 class CurrentBillerService {
 
@@ -12,8 +13,15 @@ class CurrentBillerService {
     return await db.createCurrentBiller(currentBiller);
   }
 
-  Future<int> updateCurrentBiller(CurrentBiller currentBiller, int userId, Biller biller, String billName, String acctName, String acctNum)async{
+  Future<int> updateCurrentBiller(CurrentBiller currentBiller, int userId, Biller biller, String billName, String acctName, String acctNum) async {
     CurrentBiller currentBiller = CurrentBiller(userId: userId, billerId: biller.id, nickname: billName, acctName: acctName, acctNumber: acctNum, logo: biller.logo,);
+    
+    List<Bill> bills = await db.getBillsByCurrentBiller(currentBiller.id!);
+
+    for(var bill in bills){
+      await NotificationService.editNotification(bill.id!, bill, currentBiller);
+    }
+
     return await db.updateCurrentBiller(currentBiller.id!, currentBiller);
   }
 

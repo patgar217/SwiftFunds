@@ -600,7 +600,7 @@ class DatabaseHelper{
       {
           "userId": 1,
           "currentBillerId": 1,
-          "dueDate":"03-30-2024",
+          "dueDate":"04-30-2024",
           "amount": 2500.00,
           "status": "PENDING",
           "isRepeating": 0,
@@ -624,7 +624,7 @@ class DatabaseHelper{
           
           "userId": 1,
           "currentBillerId": 3,
-          "dueDate":"03-29-2024",
+          "dueDate":"04-29-2024",
           "amount": 1000.00,
           "status": "PENDING",
           "isRepeating": 1,

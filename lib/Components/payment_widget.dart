@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/payment.dart';
+import 'package:swiftfunds/Services/date_time_service.dart';
 
 class PaymentWidget extends StatefulWidget {
   const PaymentWidget({super.key, required this.payment});
@@ -14,14 +14,10 @@ class PaymentWidget extends StatefulWidget {
 }
 
 class _PaymentWidgetState extends State<PaymentWidget> {
+  final dateTimeService = DateTimeService();
 
   String formatDate(String dateString) {
-    final parsedDate = DateFormat('MM-dd-yyyy hh:mm a').parse(dateString);
-
-    // Format the parsed date using a desired format pattern
-    final formattedDate = DateFormat('MMMM dd, yyyy HH:mm a').format(parsedDate);
-
-    return formattedDate;
+    return dateTimeService.convertFullNumberDateToWordDate(dateString);
   }
 
   @override

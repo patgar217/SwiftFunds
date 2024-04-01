@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swiftfunds/Components/button_widget.dart';
 import 'package:swiftfunds/Components/colors.dart';
@@ -9,6 +8,7 @@ import 'package:swiftfunds/Models/biller.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
 import 'package:swiftfunds/Services/bill_service.dart';
 import 'package:swiftfunds/Services/current_biller_service.dart';
+import 'package:swiftfunds/Services/date_time_service.dart';
 import 'package:swiftfunds/Views/home.dart';
 
 class AddBillerScreen extends StatefulWidget {
@@ -42,6 +42,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
   late int loggedId;
   final billService = BillService();
   final currentBillerService = CurrentBillerService();
+  final dateTimeService = DateTimeService();
 
   bool isRepeat = false;
 
@@ -141,8 +142,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
     }
 
     final now = DateTime.now();
-    final format = DateFormat('MM-dd-yyyy');
-    final parsedDate = format.parse(dueDate);
+    final parsedDate = dateTimeService.convertStringToNumberFormat(dueDate);
     setState(() {
       isDueDateCorrect = !parsedDate.isBefore(now);
       dueDateError = "Due date cannot be due.";

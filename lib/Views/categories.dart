@@ -33,7 +33,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   loadCategoriesAndBillers() async {
 
-    int loggedId = await authService.getLoggedId();
+    int loggedId = (await authService.getLoggedId())!;
 
     currentBillers = await currentBillerService.getCurrentBillersByUserId(loggedId);
     categories = await categoryService.getCategories();
