@@ -1,4 +1,5 @@
 
+import 'package:swiftfunds/Services/notification_setting_service.dart';
 import 'package:swiftfunds/Services/user_service.dart';
 
 import '../Components/button_widget.dart';
@@ -11,7 +12,7 @@ class SignUpScreen extends StatefulWidget {
   const SignUpScreen({ super.key });
 
   @override
-  _SignUpState createState() => _SignUpState();
+  State<SignUpScreen> createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUpScreen> {
@@ -34,6 +35,7 @@ class _SignUpState extends State<SignUpScreen> {
   String confirmPasswordError = "";
 
   final userService = UserService();
+  final notificationSettingService = NotificationSettingService();
 
   validateSignUp() async {
     setState(() {
@@ -124,8 +126,9 @@ class _SignUpState extends State<SignUpScreen> {
 
   signUp() async {
     try{
-      var res = await userService.createNewUser(fullName.text, email.text, usrName.text, password.text);
-      if(res>0){
+      var userId = await userService.createNewUser(fullName.text, email.text, usrName.text, password.text);
+      if(userId>0){
+        await notificationSettingService.createDefaultSetting(userId);
         if(!mounted)return;
         Navigator.push(context, MaterialPageRoute(builder: (context)=> const LoginScreen()));
       }

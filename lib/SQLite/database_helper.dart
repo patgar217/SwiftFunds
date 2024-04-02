@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -80,6 +81,17 @@ class DatabaseHelper{
    )
    ''';
 
+  String notificationSettingTable = '''
+   CREATE TABLE notificationSetting (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   userId INTEGER REFERENCES user(userId),
+   sendNotifications INTEGER,
+   scheduledHour INTEGER,
+   scheduledMinute INTEGER,
+   scheduledDays INTEGER
+   )
+   ''';
+
   //Our connection is ready
   Future<Database> initDB ()async{
     final databasePath = await getDatabasesPath();
@@ -93,12 +105,14 @@ class DatabaseHelper{
       await db.execute(billTable);
       await db.execute(paymentTable);
       await db.execute(paymentBillTable);
+      await db.execute(notificationSettingTable);
       await insertDefaultUser(db);
       await insertDefaultCategories(db);
       await insertDefaultBillers(db);
       await insertDefaultCurrentBillers(db);
       await insertDefaultBills(db);
       await insertDefaultPayments(db);
+      await insertNotificationSettings(db);
     });
   }
 
@@ -113,9 +127,26 @@ class DatabaseHelper{
 
     try {
       await db.insert('user', userData);
-      print('Default user inserted successfully!');
+      debugPrint('Default user inserted successfully!');
     } catch (e) {
-      print('Error inserting default user: $e');
+      debugPrint('Error inserting default user: $e');
+    }
+  }
+
+  Future<void> insertNotificationSettings(Database db) async {
+    final Map<String, dynamic> notificationSettings = {
+      "userId": 1,
+      "sendNotifications": 1,
+      "scheduledHour": 10,
+      "scheduledMinute": 0,
+      "scheduledDays": 3,
+    };
+
+    try {
+      await db.insert('notificationSetting', notificationSettings);
+      debugPrint('Default notificationSetting inserted successfully!');
+    } catch (e) {
+      debugPrint('Error inserting default notificationSetting: $e');
     }
   }
 
@@ -159,7 +190,7 @@ class DatabaseHelper{
       await db.insert('category', category);
     }
 
-    print('Default categories inserted successfully!');
+    debugPrint('Default categories inserted successfully!');
   }
 
   Future<void> insertDefaultBillers(Database db) async {
@@ -544,7 +575,7 @@ class DatabaseHelper{
       await db.insert('biller', biller);
     }
 
-    print('Default billers inserted successfully!');
+    debugPrint('Default billers inserted successfully!');
   }
 
   Future<void> insertDefaultCurrentBillers(Database db) async {
@@ -581,7 +612,7 @@ class DatabaseHelper{
       await db.insert('currentBiller', currentBiller);
     }
 
-    print('Default current billers inserted successfully!');
+    debugPrint('Default current billers inserted successfully!');
   }
 
   Future<void> insertDefaultBills(Database db) async {
@@ -600,7 +631,7 @@ class DatabaseHelper{
       {
           "userId": 1,
           "currentBillerId": 1,
-          "dueDate":"04-30-2024",
+          "dueDate":"05-15-2024",
           "amount": 2500.00,
           "status": "PENDING",
           "isRepeating": 0,
@@ -612,7 +643,7 @@ class DatabaseHelper{
           
           "userId": 1,
           "currentBillerId": 2,
-          "dueDate":"03-28-2024",
+          "dueDate":"05-13-2024",
           "amount": 500.00,
           "status": "PENDING",
           "isRepeating": 0,
@@ -624,7 +655,7 @@ class DatabaseHelper{
           
           "userId": 1,
           "currentBillerId": 3,
-          "dueDate":"04-29-2024",
+          "dueDate":"05-12-2024",
           "amount": 1000.00,
           "status": "PENDING",
           "isRepeating": 1,
@@ -638,7 +669,7 @@ class DatabaseHelper{
       await db.insert('bill', bill);
     }
 
-    print('Default bills inserted successfully!');
+    debugPrint('Default bills inserted successfully!');
   }
 
   Future<void> insertDefaultPayments(Database db) async {
@@ -654,9 +685,9 @@ class DatabaseHelper{
 
     try {
       await db.insert('payment', payment);
-      print('Default payment inserted successfully!');
+      debugPrint('Default payment inserted successfully!');
     } catch (e) {
-      print('Error inserting default user: $e');
+      debugPrint('Error inserting default user: $e');
     }
 
     final Map<String, dynamic> paymentBill = {
@@ -666,9 +697,9 @@ class DatabaseHelper{
 
     try {
       await db.insert('paymentBill', paymentBill);
-      print('Default payment bill inserted successfully!');
+      debugPrint('Default payment bill inserted successfully!');
     } catch (e) {
-      print('Error inserting default user: $e');
+      debugPrint('Error inserting default user: $e');
     }
   }
 }

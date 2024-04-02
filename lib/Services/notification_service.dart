@@ -1,10 +1,12 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
+import 'package:swiftfunds/Models/notification_setting.dart';
+import 'package:swiftfunds/Services/authentication_service.dart';
 import 'package:swiftfunds/Services/bill_service.dart';
 import 'package:swiftfunds/Services/date_time_service.dart';
+import 'package:swiftfunds/Services/notification_setting_service.dart';
 import 'package:swiftfunds/Views/home.dart';
 import 'package:swiftfunds/main.dart';
 
@@ -18,8 +20,6 @@ class NotificationService {
           channelKey: 'high_importance_channel',
           channelName: 'SwiftFunds',
           channelDescription: 'Notification channel for basic tests',
-          defaultColor: primaryColor,
-          ledColor: Colors.white,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
           onlyAlertOnce: true,
@@ -34,6 +34,7 @@ class NotificationService {
         )
       ],
       debug: true,
+    
     );
 
     await AwesomeNotifications().isNotificationAllowed().then(
@@ -56,6 +57,7 @@ class NotificationService {
   static Future<void> onNotificationCreatedMethod(
       ReceivedNotification receivedNotification) async {
     debugPrint('onNotificationCreatedMethod');
+    debugPrint("${receivedNotification.id?? ''} notification has been created");
   }
 
   /// Use this method to detect every time that a new notification is displayed
@@ -95,6 +97,7 @@ class NotificationService {
   }) async {
     final now = DateTime.now();
     final notificationTime = scheduledTime.difference(now).inSeconds;
+
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
@@ -105,7 +108,6 @@ class NotificationService {
         notificationLayout: notificationLayout,
         payload: payload,
         summary: summary,
-        icon: 'assets/logo.png',
       ),
       schedule: NotificationInterval(
         interval: notificationTime,
@@ -124,8 +126,10 @@ class NotificationService {
   
   static Future<void> createNotificationFromBill(int billId, Bill bill, CurrentBiller currentBiller, int day) async {
     final dateTimeService = DateTimeService();
+    final notificationSettingService = NotificationSettingService();
+    NotificationSetting notificationSetting = await notificationSettingService.getSettingOfCurrentUser();
     DateTime specificDate = dateTimeService.subtractDaysFromDate(bill.dueDate, day);
-    TimeOfDay specificTime = const TimeOfDay(hour: 10, minute: 0);
+    TimeOfDay specificTime = TimeOfDay(hour: notificationSetting.scheduledHour, minute: notificationSetting.scheduledMinute);
     DateTime scheduledTime = DateTime(
         specificDate.year,
         specificDate.month,
@@ -134,28 +138,64 @@ class NotificationService {
         specificTime.minute,
       );
 
+    String title = "${currentBiller.nickname} Bill of ₱${bill.amount} is due "; 
+    if(day > 1) {
+      title += "in $day days."; 
+    }else if (day == 1){
+      title += "tomorrow.";
+    }else if(day == 0) {
+      title += "today.";
+    }
+
     await showNotification(
       id: billId,
-      title: "${currentBiller.nickname} Bill is due in $day days.",
+      title: title ,
       body: "Pay your bills today to avoid additional charges",
       payload:{
-        "days" : "3"
+        "days" : day.toString()
       },
-      summary: 'SwiftFunds',
       scheduledTime: scheduledTime
     );
   }
 
   static Future<void> deleteNotification(int billId) async {
-    await AwesomeNotifications().dismiss(billId);
+    await AwesomeNotifications().cancel(billId);
+  }
+
+  static Future<void> deleteAllNotifications() async {
+    await AwesomeNotifications().cancelAll();
   }
 
   static Future<void> editNotification(int billId, Bill bill, CurrentBiller currentBiller)async {
     await deleteNotification(billId);
     
     final dateTimeService = DateTimeService();
+    final notificationSettingService = NotificationSettingService();
+    NotificationSetting notificationSetting = await notificationSettingService.getSettingOfCurrentUser();
     int daysBeforeBill = dateTimeService.getDaysUntilDate(bill.dueDate);
-    await createNotificationFromBill(billId, bill, currentBiller, daysBeforeBill > 3 ? 3 : daysBeforeBill);
+    await createNotificationFromBill(billId, bill, currentBiller, daysBeforeBill > notificationSetting.scheduledDays ? notificationSetting.scheduledDays : daysBeforeBill);
   }
+
+  static Future<void> editAllNotifications() async {
+    await deleteAllNotifications();
+    await createNotificationForAllBills();
+  }
+
+  static Future<void> createNotificationForAllBills() async {
+    final billService = BillService();
+    final authService = AuthenticationService();
+    final dateTimeService = DateTimeService();
+    final notificationSettingService = NotificationSettingService();
+    int loggedId = (await authService.getLoggedId())!;
+    List<Bill> bills = await billService.getPendingBills(loggedId);
+
+      NotificationSetting notificationSetting = await notificationSettingService.getSettingOfCurrentUser();
+
+    for (var bill in bills) {
+      int daysBeforeBill = dateTimeService.getDaysUntilDate(bill.dueDate);
+      await createNotificationFromBill(bill.id!, bill, bill.currentBiller!, daysBeforeBill > notificationSetting.scheduledDays ? notificationSetting.scheduledDays : daysBeforeBill);
+    }
+  }
+
 }
 

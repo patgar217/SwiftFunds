@@ -141,12 +141,12 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
       return;
     }
 
-    final now = DateTime.now();
-    final parsedDate = dateTimeService.convertStringToNumberFormat(dueDate);
-    setState(() {
-      isDueDateCorrect = !parsedDate.isBefore(now);
-      dueDateError = "Due date cannot be due.";
-    });
+    // final now = DateTime.now();
+    // final parsedDate = dateTimeService.convertStringToNumberFormat(dueDate);
+    // setState(() {
+    //   isDueDateCorrect = !parsedDate.isBefore(now);
+    //   dueDateError = "Due date cannot be due.";
+    // });
   }
   
   void checkNoOfPayments(String noOfPayments){
@@ -181,7 +181,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
 
 
   void editBill() async {
-    var res = await billService.editBill(widget.bill!, loggedId, dueDateController.text, double.parse(amountController.text), isRepeat, selectedFrequency, int.parse(noOfPaymentsController.text));
+    var res = await billService.editBill(widget.bill!, loggedId, dueDateController.text, double.parse(amountController.text), isRepeat, selectedFrequency, noOfPaymentsController.text != '' ? int.parse(noOfPaymentsController.text) : 0);
     var res1 = await currentBillerService.updateCurrentBiller(widget.currentBiller!, loggedId, widget.biller!, billNameController.text, acctNameController.text, acctNumberController.text);
 
     if(res>0 && res1>0){

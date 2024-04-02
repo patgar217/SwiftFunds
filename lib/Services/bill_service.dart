@@ -1,16 +1,19 @@
 import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/biller.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
+import 'package:swiftfunds/Models/notification_setting.dart';
 import 'package:swiftfunds/SQLite/database_service.dart';
 import 'package:swiftfunds/Services/current_biller_service.dart';
 import 'package:swiftfunds/Services/date_time_service.dart';
 import 'package:swiftfunds/Services/notification_service.dart';
+import 'package:swiftfunds/Services/notification_setting_service.dart';
 
 class BillService {
 
   final db = DatabaseService();
   final currentBillerService = CurrentBillerService();
   final dateTimeService = DateTimeService();
+  final notificationSettingService = NotificationSettingService();
 
   Future<int> addBillWithBiller(Biller biller, int userId, String billName, String acctName, String acctNum, String dueDate, double amount, bool isRepeat, String frequency, int noOfPayments) async {
     int currentBillerId = await currentBillerService.createCurrentBiller(biller, userId, billName, acctName, acctNum);
@@ -56,8 +59,12 @@ class BillService {
     int billId = await db.createBill(bill);
     CurrentBiller currentBiller = await db.getCurrentBiller(bill.currentBillerId);
     
-    int daysBeforeBill = dateTimeService.getDaysUntilDate(bill.dueDate);
-    await NotificationService.createNotificationFromBill(billId, bill, currentBiller, daysBeforeBill > 3 ? 3 : daysBeforeBill);
+    NotificationSetting notificationSetting = await notificationSettingService.getSettingOfCurrentUser();
+    if(notificationSetting.sendNotifications){
+      int daysBeforeBill = dateTimeService.getDaysUntilDate(bill.dueDate);
+      await NotificationService.createNotificationFromBill(billId, bill, currentBiller, daysBeforeBill > notificationSetting.scheduledDays ? notificationSetting.scheduledDays : daysBeforeBill);
+    }
+    
     return billId;
   }
 

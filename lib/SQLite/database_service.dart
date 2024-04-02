@@ -3,6 +3,7 @@ import 'package:swiftfunds/Models/bill.dart';
 import 'package:swiftfunds/Models/biller.dart';
 import 'package:swiftfunds/Models/category.dart';
 import 'package:swiftfunds/Models/current_biller.dart';
+import 'package:swiftfunds/Models/notification_setting.dart';
 import 'package:swiftfunds/Models/payment.dart';
 import 'package:swiftfunds/Models/user.dart';
 import 'package:swiftfunds/SQLite/database_helper.dart';
@@ -61,6 +62,38 @@ class DatabaseService {
         );
 
   }
+
+  /// NOTIFICATION SETTING TABLE
+  Future<NotificationSetting> getNotificationSetting(int userId)async{
+    final Database db = await dbHelper.initDB();
+    var res = await db.query("notificationSetting",where: "userId = ?", whereArgs: [userId]);
+
+    return res.isNotEmpty? NotificationSetting.fromMap(res.first): NotificationSetting.defaultNotification();
+  }
+
+  Future<int> createNotificationSetting(NotificationSetting notificationSetting)async{
+    final Database db = await dbHelper.initDB();
+    return db.insert("notificationSetting", notificationSetting.toMap());
+  }
+
+  Future<int> updateNotificationSetting(int userId, bool sendNotifications, int scheduledHour, int scheduledMinute,int scheduledDays) async {
+    final Database db = await dbHelper.initDB();
+    var res = db.update(
+      "notificationSetting",
+      {
+        "sendNotifications": sendNotifications ? 1 : 0,
+        "scheduledHour": scheduledHour,
+        "scheduledMinute": scheduledMinute,
+        "scheduledDays": scheduledDays,
+      },
+      where: "userId = ?",
+      whereArgs: [userId],
+    );
+
+    return res;
+  }
+
+
 
   /// CATEGORY TABLE
   Future<List<Category>> getCategories() async {

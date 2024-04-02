@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swiftfunds/Components/colors.dart';
 import 'package:swiftfunds/Services/authentication_service.dart';
+import 'package:swiftfunds/Views/settings.dart';
 import 'package:swiftfunds/Views/under_construction.dart';
 import 'package:swiftfunds/Views/login.dart';
 import 'package:swiftfunds/Views/transaction_history.dart';
@@ -73,7 +74,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       trailing: const Icon(Icons.arrow_right,size: 30),
                       title: const Text("Settings", style: TextStyle(fontSize: 18)),
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const UnderConstructionScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingsScreen()));
                       }
                     ),
                     const Divider(
