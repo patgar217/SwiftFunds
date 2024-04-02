@@ -104,15 +104,20 @@ class BillerListWidget extends StatelessWidget {
                             children: [
                               Text(widget.categoryName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), 
                               const SizedBox(height: 10),
-                              Column(
-                                children: billers.map((biller) {
-                                  return Column(
-                                    children: [
-                                      BillerWidget(biller: biller, categoryIcon: widget.icon,),
-                                      const BillerDivider(),
-                                    ],
-                                  );
-                                }).toList(),
+                              SizedBox(
+                                height: size.height * .85 - 50,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: billers.map((biller) {
+                                      return Column(
+                                        children: [
+                                          BillerWidget(biller: biller, categoryIcon: widget.icon,),
+                                          const BillerDivider(),
+                                        ],
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
                               )
                             ]
                           )

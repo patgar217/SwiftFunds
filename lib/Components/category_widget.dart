@@ -26,7 +26,7 @@ class CategoryWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 60, color: backgroundColor,),
+            Icon(icon, size: 50, color: backgroundColor,),
             const SizedBox(height: 5,),
             Text(category.name, style: const TextStyle(fontSize: 15, color: Colors.white, height: 1), textAlign: TextAlign.center,)
           ],

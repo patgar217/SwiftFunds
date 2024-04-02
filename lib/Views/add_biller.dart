@@ -140,13 +140,12 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
       });
       return;
     }
-
-    // final now = DateTime.now();
-    // final parsedDate = dateTimeService.convertStringToNumberFormat(dueDate);
-    // setState(() {
-    //   isDueDateCorrect = !parsedDate.isBefore(now);
-    //   dueDateError = "Due date cannot be due.";
-    // });
+    
+    int days = dateTimeService.getDaysUntilDate(dueDate);
+    setState(() {
+      isDueDateCorrect = days > 0;
+      dueDateError = "Due date cannot be due.";
+    });
   }
   
   void checkNoOfPayments(String noOfPayments){
@@ -530,7 +529,7 @@ class _AddBillerScreenState extends State<AddBillerScreen> {
                                       }else{
                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
                                       }
-                                    }, backgroundColor: secondaryColor, textSize: 15, isRounded: true, widthRatio: .2, marginTop: 10),
+                                    }, backgroundColor: secondaryColor, textSize: 15, isRounded: true, widthRatio: .21, marginTop: 10),
                                     const SizedBox(width: 5,),
                                     Button(label: "SAVE", press: (){
                                       bool isValidated = validateBill();
