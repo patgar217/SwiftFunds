@@ -32,6 +32,11 @@ class DateTimeService {
     return convertNumberFormatToString(dateTime.add(Duration(days: days)));
   }
 
+  DateTime addDayFromToday(int days){
+    DateTime dateTime = DateTime.now();
+    return dateTime.add(Duration(days: days));
+  }
+
   DateTime subtractDaysFromDate(String date, int days){
     DateTime dateTime = convertStringToNumberFormat(date);
     return dateTime.subtract(Duration(days: days));

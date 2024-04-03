@@ -121,14 +121,24 @@ class NotificationService {
   static Future<void> createNextNotification(int billId, int days) async{
     final billService = BillService();
     Bill bill = await billService.getBillById(billId);
-    if(days > 1) createNotificationFromBill(bill.id!, bill, bill.currentBiller!, days-1);
+    if(days > 0) {
+      createNotificationFromBill(bill.id!, bill, bill.currentBiller!, days-1);
+    }else{
+      createNotificationFromBill(bill.id!, bill, bill.currentBiller!, -1);
+    }
+    
   }
   
   static Future<void> createNotificationFromBill(int billId, Bill bill, CurrentBiller currentBiller, int day) async {
     final dateTimeService = DateTimeService();
     final notificationSettingService = NotificationSettingService();
     NotificationSetting notificationSetting = await notificationSettingService.getSettingOfCurrentUser();
-    DateTime specificDate = dateTimeService.subtractDaysFromDate(bill.dueDate, day);
+    DateTime specificDate;
+    if(day >= 0){
+      specificDate = dateTimeService.subtractDaysFromDate(bill.dueDate, day);
+    }else {
+      specificDate = dateTimeService.addDayFromToday(1);
+    }
     TimeOfDay specificTime = TimeOfDay(hour: notificationSetting.scheduledHour, minute: notificationSetting.scheduledMinute);
     DateTime scheduledTime = DateTime(
         specificDate.year,
