@@ -38,7 +38,7 @@ class PaymentService {
 
     Payment updatedPayment = payment;
     updatedPayment.paymentDate = formattedDateTime;
-    updatedPayment.pointsEarned = isSuccess ? payment.totalAmount * 0.0001 : 0.00;
+    updatedPayment.pointsEarned = isSuccess ? payment.totalAmount * 0.001 : 0.00;
     updatedPayment.pointsRedeemed = isSuccess ? payment.pointsRedeemed : 0.00;
     updatedPayment.status = isSuccess ? "SUCCESS" : "FAILED";
 
